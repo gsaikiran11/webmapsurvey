@@ -10025,7 +10025,7 @@ geolocateButton.addEventListener('touchstart', handleGeolocate);
 
 
         stage14MeasureButton.textContent =
-            "📐 Measure";
+            "📐";
 
 
         stage14MeasureButton.classList.remove(
