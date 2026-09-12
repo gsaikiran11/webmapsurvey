@@ -1,7 +1,6 @@
 /* ====================================================================
    OPENLAYERS MAP — MASTER UI STYLESHEET
-
-   Compact Feature Popup + Corrected Layer Switcher Position
+   Stable Control Positions + Compact Panels
    ==================================================================== */
 
 
@@ -11,29 +10,29 @@
 
 :root {
 
-    --ui-accent:        #1f6feb;
-    --ui-accent-dark:   #1657b0;
-    --ui-accent-soft:   rgba(31, 111, 235, 0.12);
+    --ui-accent: #1f6feb;
+    --ui-accent-dark: #1657b0;
+    --ui-accent-soft: rgba(31, 111, 235, 0.12);
 
-    --ui-bg:            #ffffff;
-    --ui-bg-subtle:     #f5f7fa;
-    --ui-bg-hover:      #eef1f5;
-    --ui-bg-active:     #e6ecf5;
+    --ui-bg: #ffffff;
+    --ui-bg-subtle: #f5f7fa;
+    --ui-bg-hover: #eef1f5;
+    --ui-bg-active: #e6ecf5;
 
-    --ui-border:        #d7dce3;
-    --ui-border-soft:   #e9edf2;
+    --ui-border: #d7dce3;
+    --ui-border-soft: #e9edf2;
     --ui-border-strong: #aeb6c2;
 
-    --ui-text:          #1d2430;
-    --ui-text-muted:    #5b6472;
-    --ui-text-faint:    #8b93a1;
+    --ui-text: #1d2430;
+    --ui-text-muted: #5b6472;
+    --ui-text-faint: #8b93a1;
 
-    --ui-success:       #16a34a;
-    --ui-warning:       #d97706;
-    --ui-danger:        #dc2626;
+    --ui-success: #16a34a;
+    --ui-warning: #d97706;
+    --ui-danger: #dc2626;
 
-    --ui-radius:        10px;
-    --ui-radius-sm:     7px;
+    --ui-radius: 10px;
+    --ui-radius-sm: 7px;
 
     --ui-shadow:
         0 4px 18px rgba(16, 24, 40, 0.18);
@@ -58,27 +57,46 @@
         Menlo,
         monospace;
 
-    /* Control geometry */
+
+    /* ---------------------------------------------------------------
+       CONTROL GEOMETRY
+       --------------------------------------------------------------- */
 
     --edge: 12px;
-    --btn-h: 44px;
-    --btn-gap: 8px;
 
-    /* Z-index ladder */
+    --main-btn: 40px;
 
-    --z-geolocate:       16000;
-    --z-north:           16500;
-    --z-layer-switcher:  16990;
-    --z-styleditor:      17000;
-    --z-search:          17001;
-    --z-coords:          17000;
-    --z-measure:         18000;
-    --z-popup:           20000;
+    --panel-gap: 8px;
+
+
+    /* ---------------------------------------------------------------
+       CONTROL POSITIONS
+       --------------------------------------------------------------- */
+
+    --zoom-top: 12px;
+    --measure-top: 132px;
+    --location-top: 184px;
+    --style-top: 236px;
+    --search-top: 288px;
+
+
+    /* ---------------------------------------------------------------
+       Z-INDEX
+       --------------------------------------------------------------- */
+
+    --z-geolocate: 16000;
+    --z-north: 16500;
+    --z-layer-switcher: 16990;
+    --z-styleditor: 17000;
+    --z-search: 17001;
+    --z-coords: 17000;
+    --z-measure: 18000;
+    --z-popup: 20000;
 }
 
 
 /* ====================================================================
-   2. BASE LAYOUT & MAP
+   2. BASE LAYOUT
    ==================================================================== */
 
 html,
@@ -87,6 +105,7 @@ body {
     margin: 0;
     padding: 0;
 
+    width: 100%;
     height: 100%;
 
     font-family: var(--ui-font);
@@ -124,38 +143,8 @@ body {
 }
 
 
-.ol-attribution {
-
-    font-family: var(--ui-font);
-
-    font-size: 11px;
-
-    background:
-        rgba(255, 255, 255, 0.85) !important;
-}
-
-
-.ol-attribution ul {
-
-    color: var(--ui-text-muted);
-}
-
-
-.ol-scale-line {
-
-    background:
-        rgba(255, 255, 255, 0.9);
-
-    border-radius: 4px;
-
-    color: var(--ui-text-muted);
-
-    font-family: var(--ui-font);
-}
-
-
 /* ====================================================================
-   3. GENERIC UI PRIMITIVES
+   3. OPENLAYERS GENERAL UI
    ==================================================================== */
 
 .ol-control {
@@ -166,6 +155,12 @@ body {
 }
 
 
+/*
+   IMPORTANT:
+   Do NOT globally set width/height on every button.
+   Main controls are controlled individually below.
+*/
+
 .ol-control a,
 .ol-control button {
 
@@ -173,16 +168,15 @@ body {
 
     color: var(--ui-text) !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    border: 1px solid var(--ui-border) !important;
 
-    border-radius:
-        var(--ui-radius-sm) !important;
+    border-radius: var(--ui-radius-sm) !important;
 
-    box-shadow:
-        var(--ui-shadow-sm) !important;
+    box-shadow: var(--ui-shadow-sm) !important;
 
     cursor: pointer !important;
+
+    box-sizing: border-box !important;
 
     transition:
         background .15s ease,
@@ -193,13 +187,15 @@ body {
 .ol-control a:hover,
 .ol-control button:hover {
 
-    background:
-        var(--ui-bg-hover) !important;
+    background: var(--ui-bg-hover) !important;
 
-    border-color:
-        var(--ui-accent) !important;
+    border-color: var(--ui-accent) !important;
 }
 
+
+/* ====================================================================
+   4. GENERIC UI BUTTON
+   ==================================================================== */
 
 .ui-btn {
 
@@ -213,20 +209,15 @@ body {
 
     padding: 9px 14px;
 
-    border:
-        1px solid var(--ui-border);
+    border: 1px solid var(--ui-border);
 
-    border-radius:
-        var(--ui-radius-sm);
+    border-radius: var(--ui-radius-sm);
 
-    background:
-        var(--ui-bg);
+    background: var(--ui-bg);
 
-    color:
-        var(--ui-text);
+    color: var(--ui-text);
 
-    font-family:
-        var(--ui-font);
+    font-family: var(--ui-font);
 
     font-size: 13px;
 
@@ -236,39 +227,36 @@ body {
 
     cursor: pointer;
 
+    box-sizing: border-box;
+
+    user-select: none;
+
     transition:
         background .15s ease,
         border-color .15s ease,
         transform .06s ease;
-
-    user-select: none;
 }
 
 
 .ui-btn:hover {
 
-    background:
-        var(--ui-bg-hover);
+    background: var(--ui-bg-hover);
 
-    border-color:
-        var(--ui-border-strong);
+    border-color: var(--ui-border-strong);
 }
 
 
 .ui-btn:active {
 
-    transform:
-        translateY(1px);
+    transform: translateY(1px);
 }
 
 
 .ui-btn--primary {
 
-    background:
-        var(--ui-accent);
+    background: var(--ui-accent);
 
-    border-color:
-        var(--ui-accent);
+    border-color: var(--ui-accent);
 
     color: #fff;
 }
@@ -276,43 +264,43 @@ body {
 
 .ui-btn--primary:hover {
 
-    background:
-        var(--ui-accent-dark);
+    background: var(--ui-accent-dark);
 }
 
 
 /* ====================================================================
-   4. TOP-RIGHT : NORTH ARROW
+   5. NORTH ARROW — TOP RIGHT
    ==================================================================== */
 
 .stage15-north-symbol {
 
-    position: fixed;
+    position: fixed !important;
 
-    top: var(--edge);
+    top: var(--edge) !important;
+    right: var(--edge) !important;
 
-    right: var(--edge);
+    width: 56px !important;
+    height: 56px !important;
 
-    z-index: var(--z-north);
+    margin: 0 !important;
+    padding: 0 !important;
 
-    width: 56px;
-    height: 56px;
+    z-index: var(--z-north) !important;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    background:
-        var(--ui-bg);
+    box-sizing: border-box;
 
-    border:
-        1px solid var(--ui-border);
+    background: var(--ui-bg);
+
+    border: 1px solid var(--ui-border);
 
     border-radius: 50%;
 
-    box-shadow:
-        var(--ui-shadow-sm);
+    box-shadow: var(--ui-shadow-sm);
 
     cursor: pointer;
 
@@ -326,8 +314,7 @@ body {
 
 .stage15-north-symbol:hover {
 
-    background:
-        var(--ui-bg-hover);
+    background: var(--ui-bg-hover);
 }
 
 
@@ -350,18 +337,15 @@ body {
     position: absolute;
 
     top: -2px;
-
     left: 50%;
 
-    transform:
-        translateX(-50%);
+    transform: translateX(-50%);
 
     font-size: 18px;
 
     font-weight: 800;
 
-    color:
-        var(--ui-accent);
+    color: var(--ui-accent);
 
     line-height: 1;
 }
@@ -372,7 +356,6 @@ body {
     position: absolute;
 
     top: 15px;
-
     left: 50%;
 
     transform:
@@ -382,14 +365,10 @@ body {
     width: 0;
     height: 0;
 
-    border-left:
-        8px solid transparent;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
 
-    border-right:
-        8px solid transparent;
-
-    border-bottom:
-        16px solid var(--ui-danger);
+    border-bottom: 16px solid var(--ui-danger);
 }
 
 
@@ -398,18 +377,14 @@ body {
     position: absolute;
 
     top: 28px;
-
     left: 50%;
 
-    transform:
-        translateX(-50%);
+    transform: translateX(-50%);
 
     width: 4px;
-
     height: 13px;
 
-    background:
-        var(--ui-danger);
+    background: var(--ui-danger);
 
     border-radius: 3px;
 }
@@ -424,7 +399,7 @@ body {
 
 
 /* ====================================================================
-   5. TOP-RIGHT : LAYER SWITCHER
+   6. LAYER SWITCHER — TOP RIGHT
    ==================================================================== */
 
 .layer-switcher {
@@ -433,13 +408,12 @@ body {
 
     top:
         calc(
-            var(--edge) +
-            56px +
-            10px
+            var(--edge) + 56px + 10px
         ) !important;
 
-    right:
-        var(--edge) !important;
+    right: var(--edge) !important;
+
+    left: auto !important;
 
     width: 48px !important;
     height: 48px !important;
@@ -447,52 +421,59 @@ body {
     max-width: none !important;
     max-height: none !important;
 
-    z-index:
-        var(--z-layer-switcher) !important;
+    margin: 0 !important;
+    padding: 0 !important;
 
-    background:
-        transparent !important;
+    z-index: var(--z-layer-switcher) !important;
+
+    background: transparent !important;
 
     border: none !important;
 
     box-shadow: none !important;
 
-    font-family:
-        var(--ui-font);
-
     display: block !important;
 
     overflow: visible !important;
+
+    font-family: var(--ui-font);
 }
 
 
 /* ====================================================================
-   CIRCULAR LAYERS BUTTON
+   LAYER SWITCHER BUTTON
    ==================================================================== */
 
 .layer-switcher-header {
 
+    position: relative !important;
+
+    top: 0 !important;
+    left: 0 !important;
+
     width: 48px !important;
     height: 48px !important;
 
-    padding: 0 !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+
     margin: 0 !important;
+    padding: 0 !important;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    background:
-        var(--ui-bg);
+    box-sizing: border-box;
 
-    border:
-        1px solid var(--ui-border);
+    background: var(--ui-bg);
+
+    border: 1px solid var(--ui-border);
 
     border-radius: 50%;
 
-    box-shadow:
-        var(--ui-shadow-sm);
+    box-shadow: var(--ui-shadow-sm);
 
     cursor: pointer;
 
@@ -507,26 +488,22 @@ body {
 
 .layer-switcher-header:hover {
 
-    background:
-        var(--ui-bg-hover);
+    background: var(--ui-bg-hover);
 
-    transform:
-        scale(1.05);
+    transform: scale(1.05);
 
-    box-shadow:
-        var(--ui-shadow);
+    box-shadow: var(--ui-shadow);
 }
 
 
 .layer-switcher-header:active {
 
-    transform:
-        scale(.95);
+    transform: scale(.95);
 }
 
 
 /* ====================================================================
-   REMOVE TEXT — ICON ONLY
+   LAYER ICON
    ==================================================================== */
 
 .layer-switcher-title {
@@ -554,7 +531,6 @@ body {
 
     background:
         url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2 3 7l9 5 9-5-9-5z'/%3E%3Cpath d='m3 12 9 5 9-5'/%3E%3Cpath d='m3 17 9 5 9-5'/%3E%3C/svg%3E")
-
         center / contain no-repeat;
 }
 
@@ -574,15 +550,13 @@ body {
     position: absolute;
 
     top: 58px;
-
     right: 0;
 
     width: 244px;
 
     max-width:
         calc(
-            100vw -
-            (var(--edge) * 2)
+            100vw - (var(--edge) * 2)
         );
 
     max-height:
@@ -590,22 +564,19 @@ body {
 
     overflow-y: auto;
 
-    padding:
-        10px 11px 12px;
+    padding: 10px 11px 12px;
 
-    background:
-        var(--ui-bg);
+    background: var(--ui-bg);
 
-    border:
-        1px solid var(--ui-border);
+    border: 1px solid var(--ui-border);
 
-    border-radius:
-        var(--ui-radius);
+    border-radius: var(--ui-radius);
 
-    box-shadow:
-        var(--ui-shadow);
+    box-shadow: var(--ui-shadow);
 
     display: none;
+
+    box-sizing: border-box;
 }
 
 
@@ -614,6 +585,10 @@ body {
     display: block;
 }
 
+
+/* ====================================================================
+   LAYER SECTION TITLE
+   ==================================================================== */
 
 .layer-section-title {
 
@@ -631,8 +606,7 @@ body {
 
     letter-spacing: .7px;
 
-    color:
-        var(--ui-text-muted);
+    color: var(--ui-text-muted);
 
     padding: 3px 1px;
 }
@@ -647,8 +621,7 @@ body {
 
     border-radius: 2px;
 
-    background:
-        var(--ui-accent);
+    background: var(--ui-accent);
 }
 
 
@@ -656,8 +629,7 @@ body {
 
     height: 1px;
 
-    background:
-        var(--ui-border-soft);
+    background: var(--ui-border-soft);
 
     margin: 10px 0;
 }
@@ -679,14 +651,11 @@ body {
 
     margin-bottom: 5px;
 
-    border:
-        1px solid var(--ui-border-soft);
+    border: 1px solid var(--ui-border-soft);
 
-    border-radius:
-        var(--ui-radius-sm);
+    border-radius: var(--ui-radius-sm);
 
-    background:
-        var(--ui-bg-subtle);
+    background: var(--ui-bg-subtle);
 
     cursor: pointer;
 
@@ -700,11 +669,9 @@ body {
 
 #base-layers .layer-item:hover {
 
-    background:
-        var(--ui-bg-hover);
+    background: var(--ui-bg-hover);
 
-    border-color:
-        var(--ui-border);
+    border-color: var(--ui-border);
 }
 
 
@@ -721,8 +688,7 @@ body {
 
     flex: 0 0 auto;
 
-    border:
-        2px solid var(--ui-border-strong);
+    border: 2px solid var(--ui-border-strong);
 
     border-radius: 50%;
 
@@ -734,8 +700,7 @@ body {
 
 #base-layers .layer-item input[type="radio"]:checked {
 
-    border-color:
-        var(--ui-accent);
+    border-color: var(--ui-accent);
 }
 
 
@@ -749,8 +714,7 @@ body {
 
     border-radius: 50%;
 
-    background:
-        var(--ui-accent);
+    background: var(--ui-accent);
 }
 
 
@@ -778,21 +742,17 @@ body {
 
     align-items: center;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
 
     gap: 6px;
 
     padding: 6px 8px;
 
-    border:
-        1px solid var(--ui-border-soft);
+    border: 1px solid var(--ui-border-soft);
 
-    border-radius:
-        var(--ui-radius-sm);
+    border-radius: var(--ui-radius-sm);
 
-    background:
-        var(--ui-bg-subtle);
+    background: var(--ui-bg-subtle);
 
     transition:
         background .15s ease,
@@ -802,17 +762,11 @@ body {
 
 .layer-manager-row:hover {
 
-    background:
-        var(--ui-bg-hover);
+    background: var(--ui-bg-hover);
 
-    border-color:
-        var(--ui-border);
+    border-color: var(--ui-border);
 }
 
-
-/* ====================================================================
-   LAYER NAME
-   ==================================================================== */
 
 .layer-name-section {
 
@@ -827,7 +781,7 @@ body {
 
 
 /* ====================================================================
-   CHECKBOX
+   LAYER CHECKBOX
    ==================================================================== */
 
 .layer-name-section input[type="checkbox"] {
@@ -839,8 +793,7 @@ body {
 
     flex: 0 0 auto;
 
-    border:
-        2px solid var(--ui-border-strong);
+    border: 2px solid var(--ui-border-strong);
 
     border-radius: 4px;
 
@@ -852,11 +805,9 @@ body {
 
 .layer-name-section input[type="checkbox"]:checked {
 
-    background:
-        var(--ui-accent);
+    background: var(--ui-accent);
 
-    border-color:
-        var(--ui-accent);
+    border-color: var(--ui-accent);
 }
 
 
@@ -867,26 +818,18 @@ body {
     position: absolute;
 
     left: 3px;
-
-    top: 0px;
+    top: 0;
 
     width: 4px;
     height: 7px;
 
-    border:
-        solid #fff;
+    border: solid #fff;
 
-    border-width:
-        0 2px 2px 0;
+    border-width: 0 2px 2px 0;
 
-    transform:
-        rotate(45deg);
+    transform: rotate(45deg);
 }
 
-
-/* ====================================================================
-   LAYER NAME TEXT
-   ==================================================================== */
 
 .layer-name {
 
@@ -918,21 +861,24 @@ body {
 
 .layer-button {
 
-    width: 23px;
-    height: 23px;
+    width: 23px !important;
+    height: 23px !important;
+
+    min-width: 23px !important;
+    min-height: 23px !important;
 
     display: inline-flex;
 
     align-items: center;
     justify-content: center;
 
-    border:
-        1px solid var(--ui-border);
+    padding: 0 !important;
+
+    border: 1px solid var(--ui-border);
 
     border-radius: 5px;
 
-    background:
-        var(--ui-bg);
+    background: var(--ui-bg);
 
     font-size: 12px;
 
@@ -948,63 +894,72 @@ body {
 
 .layer-button:hover {
 
-    background:
-        var(--ui-bg-active);
+    background: var(--ui-bg-active);
 
-    border-color:
-        var(--ui-accent);
+    border-color: var(--ui-accent);
 }
 
 
 /* ====================================================================
-   6. TOP-LEFT : CONTROL RAIL
+   7. LEFT CONTROL RAIL
    ==================================================================== */
+
+
+/* --------------------------------------------------------------------
+   ZOOM
+   -------------------------------------------------------------------- */
 
 .ol-zoom {
 
-    position: absolute !important;
+    position: fixed !important;
 
-    top:
-        var(--edge) !important;
+    top: var(--zoom-top) !important;
+    left: var(--edge) !important;
 
-    left:
-        var(--edge) !important;
+    right: auto !important;
+    bottom: auto !important;
 
-    background:
-        transparent !important;
+    width: var(--main-btn) !important;
 
+    margin: 0 !important;
     padding: 0 !important;
 
-    border-radius:
-        var(--ui-radius-sm) !important;
+    z-index: 16000 !important;
+
+    background: transparent !important;
+
+    border-radius: var(--ui-radius-sm) !important;
 
     overflow: hidden;
 
-    box-shadow:
-        var(--ui-shadow-sm);
+    box-shadow: var(--ui-shadow-sm);
+
+    box-sizing: border-box !important;
 }
 
 
 .ol-zoom button {
 
+    position: relative !important;
+
     display: block !important;
 
-    width:
-        var(--btn-h) !important;
+    width: var(--main-btn) !important;
+    min-width: var(--main-btn) !important;
 
-    height:
-        var(--btn-h) !important;
+    height: var(--main-btn) !important;
+    min-height: var(--main-btn) !important;
 
     margin: 0 !important;
+    padding: 0 !important;
 
-    background:
-        var(--ui-bg) !important;
+    box-sizing: border-box !important;
 
-    color:
-        var(--ui-text) !important;
+    background: var(--ui-bg) !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    color: var(--ui-text) !important;
+
+    border: 1px solid var(--ui-border) !important;
 
     border-radius: 0 !important;
 
@@ -1013,6 +968,8 @@ body {
     font-weight: 700 !important;
 
     line-height: 1 !important;
+
+    white-space: normal !important;
 }
 
 
@@ -1024,89 +981,82 @@ body {
 
 .ol-zoom button:first-child {
 
-    border-top-left-radius:
-        var(--ui-radius-sm) !important;
+    border-top-left-radius: var(--ui-radius-sm) !important;
 
-    border-top-right-radius:
-        var(--ui-radius-sm) !important;
+    border-top-right-radius: var(--ui-radius-sm) !important;
 }
 
 
 .ol-zoom button:last-child {
 
-    border-bottom-left-radius:
-        var(--ui-radius-sm) !important;
+    border-bottom-left-radius: var(--ui-radius-sm) !important;
 
-    border-bottom-right-radius:
-        var(--ui-radius-sm) !important;
+    border-bottom-right-radius: var(--ui-radius-sm) !important;
 }
 
 
 .ol-zoom button:hover {
 
-    background:
-        var(--ui-bg-hover) !important;
+    background: var(--ui-bg-hover) !important;
 
-    border-color:
-        var(--ui-accent) !important;
+    border-color: var(--ui-accent) !important;
 }
 
 
 /* ====================================================================
-   STACK POSITIONS
-   ==================================================================== */
-
-#stage14-control,
-.ol-control.geolocate,
-.dynamic-style-control,
-#btn-search,
-#stage6-search-button {
-
-    left:
-        var(--edge) !important;
-}
-
-
-/* ====================================================================
-   MEASURE
+   MEASURE BUTTON
    ==================================================================== */
 
 #stage14-control {
 
-    position: absolute !important;
+    position: fixed !important;
 
-    top: 132px !important;
+    top: var(--measure-top) !important;
 
-    left:
-        var(--edge) !important;
+    left: var(--edge) !important;
 
-    z-index:
-        var(--z-measure) !important;
+    right: auto !important;
+    bottom: auto !important;
 
-    background:
-        transparent !important;
+    width: var(--main-btn) !important;
+    height: var(--main-btn) !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    z-index: var(--z-measure) !important;
+
+    background: transparent !important;
+
+    box-sizing: border-box !important;
 }
 
 
 #stage14-measure-button {
 
-    width:
-        var(--btn-h) !important;
+    position: relative !important;
 
-    height:
-        var(--btn-h) !important;
+    top: 0 !important;
+    left: 0 !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    width: var(--main-btn) !important;
+    min-width: var(--main-btn) !important;
 
-    border-radius:
-        var(--ui-radius-sm) !important;
+    height: var(--main-btn) !important;
+    min-height: var(--main-btn) !important;
 
-    background:
-        var(--ui-bg) !important;
+    margin: 0 !important;
+    padding: 0 !important;
 
-    box-shadow:
-        var(--ui-shadow-sm) !important;
+    box-sizing: border-box !important;
+
+    border: 1px solid var(--ui-border) !important;
+
+    border-radius: var(--ui-radius-sm) !important;
+
+    background: var(--ui-bg) !important;
+
+    box-shadow: var(--ui-shadow-sm) !important;
 
     font-size: 20px !important;
 
@@ -1118,6 +1068,8 @@ body {
 
     justify-content: center !important;
 
+    white-space: normal !important;
+
     transition:
         background .15s ease,
         border-color .15s ease !important;
@@ -1126,21 +1078,19 @@ body {
 
 #stage14-measure-button:hover {
 
-    background:
-        var(--ui-bg-hover) !important;
+    background: var(--ui-bg-hover) !important;
 
-    border-color:
-        var(--ui-accent) !important;
+    border-color: var(--ui-accent) !important;
 }
 
 
 #stage14-measure-button.active {
 
-    background:
-        var(--ui-accent) !important;
+    background: var(--ui-accent) !important;
 
-    border-color:
-        var(--ui-accent) !important;
+    border-color: var(--ui-accent) !important;
+
+    color: #fff !important;
 }
 
 
@@ -1150,20 +1100,19 @@ body {
 
 #stage14-panel {
 
-    position: absolute !important;
+    position: fixed !important;
 
-    top: 132px !important;
+    top: var(--measure-top) !important;
 
     left:
         calc(
             var(--edge) +
-            var(--btn-h) +
-            8px
+            var(--main-btn) +
+            var(--panel-gap)
         ) !important;
 
-    bottom: auto !important;
-
     right: auto !important;
+    bottom: auto !important;
 
     width: 290px !important;
 
@@ -1175,83 +1124,88 @@ body {
 
     overflow-y: auto !important;
 
-    z-index:
-        var(--z-measure) !important;
+    z-index: var(--z-measure) !important;
 
-    background:
-        var(--ui-bg) !important;
+    background: var(--ui-bg) !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    border: 1px solid var(--ui-border) !important;
 
-    border-radius:
-        var(--ui-radius) !important;
+    border-radius: var(--ui-radius) !important;
 
-    box-shadow:
-        var(--ui-shadow) !important;
+    box-shadow: var(--ui-shadow) !important;
 
-    font-family:
-        var(--ui-font) !important;
+    font-family: var(--ui-font) !important;
 
     font-size: 13px !important;
 
-    color:
-        var(--ui-text) !important;
+    color: var(--ui-text) !important;
 
-    box-sizing:
-        border-box !important;
+    box-sizing: border-box !important;
 }
 
 
 /* ====================================================================
-   LOCATION
+   LOCATION BUTTON
    ==================================================================== */
 
 .ol-control.geolocate {
 
-    position: absolute !important;
+    position: fixed !important;
 
-    top: 184px !important;
+    top: var(--location-top) !important;
 
-    left:
-        var(--edge) !important;
+    left: var(--edge) !important;
 
-    z-index:
-        var(--z-geolocate) !important;
+    right: auto !important;
+    bottom: auto !important;
+
+    width: var(--main-btn) !important;
+    height: var(--main-btn) !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    z-index: var(--z-geolocate) !important;
+
+    box-sizing: border-box !important;
 }
 
 
 .geolocate-button {
 
-    width:
-        var(--btn-h) !important;
+    position: relative !important;
 
-    height:
-        var(--btn-h) !important;
+    top: 0 !important;
+    left: 0 !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    width: var(--main-btn) !important;
+    min-width: var(--main-btn) !important;
 
-    border-radius:
-        var(--ui-radius-sm) !important;
+    height: var(--main-btn) !important;
+    min-height: var(--main-btn) !important;
 
-    background:
-        var(--ui-bg) !important;
+    margin: 0 !important;
+    padding: 0 !important;
 
-    box-shadow:
-        var(--ui-shadow-sm) !important;
+    border: 1px solid var(--ui-border) !important;
+
+    border-radius: var(--ui-radius-sm) !important;
+
+    background: var(--ui-bg) !important;
+
+    box-shadow: var(--ui-shadow-sm) !important;
 
     cursor: pointer !important;
 
-    position: relative !important;
-
     display: inline-flex !important;
 
-    align-items: center;
+    align-items: center !important;
 
-    justify-content: center;
+    justify-content: center !important;
 
     box-sizing: border-box !important;
+
+    white-space: normal !important;
 
     transition:
         background .15s ease,
@@ -1261,8 +1215,9 @@ body {
 
 .geolocate-button:hover {
 
-    background:
-        var(--ui-bg-hover) !important;
+    background: var(--ui-bg-hover) !important;
+
+    border-color: var(--ui-accent) !important;
 }
 
 
@@ -1275,112 +1230,196 @@ body {
 
     background:
         url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f6feb' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='7'/%3E%3Cpath d='M12 1v4M12 19v4M1 12h4M19 12h4'/%3E%3Ccircle cx='12' cy='12' r='1.6' fill='%231f6feb' stroke='none'/%3E%3C/svg%3E")
-
         center / contain no-repeat;
 }
 
 
 /* ====================================================================
-   STYLE EDITOR
+   STYLE EDITOR BUTTON
    ==================================================================== */
+
+
+/*
+   VERSION A:
+   If your JavaScript creates .dynamic-style-control
+*/
 
 .dynamic-style-control {
 
-    position: absolute !important;
+    position: fixed !important;
 
-    top: 236px !important;
+    top: var(--style-top) !important;
 
-    left:
-        var(--edge) !important;
+    left: var(--edge) !important;
 
     right: auto !important;
+    bottom: auto !important;
 
-    z-index:
-        var(--z-styleditor) !important;
+    width: var(--main-btn) !important;
+    height: var(--main-btn) !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    z-index: var(--z-styleditor) !important;
+
+    box-sizing: border-box !important;
+
+    background: transparent !important;
 }
 
 
 .dynamic-style-control > button {
 
-    width:
-        var(--btn-h) !important;
+    position: relative !important;
 
-    height:
-        var(--btn-h) !important;
+    top: 0 !important;
+    left: 0 !important;
 
-    font-size: 20px !important;
+    width: var(--main-btn) !important;
+    min-width: var(--main-btn) !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    height: var(--main-btn) !important;
+    min-height: var(--main-btn) !important;
 
-    border-radius:
-        var(--ui-radius-sm) !important;
+    margin: 0 !important;
+    padding: 0 !important;
 
-    background:
-        var(--ui-bg) !important;
+    box-sizing: border-box !important;
 
-    box-shadow:
-        var(--ui-shadow-sm) !important;
+    border: 1px solid var(--ui-border) !important;
+
+    border-radius: var(--ui-radius-sm) !important;
+
+    background: var(--ui-bg) !important;
+
+    color: var(--ui-text) !important;
+
+    box-shadow: var(--ui-shadow-sm) !important;
+
+    cursor: pointer !important;
 
     display: inline-flex !important;
 
-    align-items: center;
+    align-items: center !important;
 
-    justify-content: center;
+    justify-content: center !important;
+
+    white-space: normal !important;
+
+    font-size: 18px !important;
 }
 
 
 .dynamic-style-control > button:hover {
 
-    background:
-        var(--ui-bg-hover) !important;
+    background: var(--ui-bg-hover) !important;
+
+    border-color: var(--ui-accent) !important;
 }
 
 
-.dynamic-style-panel {
+/*
+   VERSION B:
+   If your JavaScript creates #dynamic-style-open-button directly.
+   
+   This keeps it in the SAME left control rail position.
+*/
+
+#dynamic-style-open-button {
+
+    position: fixed !important;
+
+    top: var(--style-top) !important;
+
+    left: var(--edge) !important;
 
     right: auto !important;
+    bottom: auto !important;
 
-    left:
-        calc(
-            var(--edge) +
-            var(--btn-h) +
-            8px
-        ) !important;
+    width: var(--main-btn) !important;
+    min-width: var(--main-btn) !important;
 
-    top: 0 !important;
+    height: var(--main-btn) !important;
+    min-height: var(--main-btn) !important;
 
-    width: 300px !important;
+    margin: 0 !important;
+    padding: 0 !important;
 
-    max-width:
-        calc(100vw - 120px) !important;
+    z-index: var(--z-styleditor) !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    box-sizing: border-box !important;
 
-    border-radius:
-        var(--ui-radius) !important;
+    background: var(--ui-bg) !important;
 
-    box-shadow:
-        var(--ui-shadow) !important;
+    color: var(--ui-text) !important;
 
-    font-family:
-        var(--ui-font) !important;
+    border: 1px solid var(--ui-border) !important;
 
-    font-size: 13px !important;
+    border-radius: var(--ui-radius-sm) !important;
 
-    color:
-        var(--ui-text) !important;
+    box-shadow: var(--ui-shadow-sm) !important;
 
-    padding: 14px !important;
+    font-family: var(--ui-font) !important;
 
-    background:
-        var(--ui-bg) !important;
+    font-size: 18px !important;
+
+    font-weight: 600 !important;
+
+    cursor: pointer !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    white-space: normal !important;
+}
+
+
+#dynamic-style-open-button:hover {
+
+    background: var(--ui-bg-hover) !important;
+
+    border-color: var(--ui-accent) !important;
 }
 
 
 /* ====================================================================
-   SEARCH
+   STYLE EDITOR PANEL
+   ==================================================================== */
+
+.dynamic-style-panel {
+
+    position: fixed !important;
+
+    top: var(--style-top) !important;
+
+    left:
+        calc(
+            var(--edge) +
+            var(--main-btn) +
+            var(--panel-gap)
+        ) !important;
+
+    right: auto !important;
+
+    z-index: 30000 !important;
+
+    box-sizing: border-box !important;
+
+    max-width:
+        calc(100vw - 120px) !important;
+
+    overflow-x: hidden !important;
+
+    overflow-y: auto !important;
+}
+
+
+/* ====================================================================
+   SEARCH BUTTON
    ==================================================================== */
 
 #stage6-search-button,
@@ -1388,92 +1427,106 @@ body {
 
     position: fixed !important;
 
-    top: 288px !important;
+    top: var(--search-top) !important;
 
-    left:
-        var(--edge) !important;
+    left: var(--edge) !important;
 
-    height:
-        var(--btn-h) !important;
+    right: auto !important;
+    bottom: auto !important;
 
-    width:
-        var(--btn-h) !important;
+    width: var(--main-btn) !important;
+    min-width: var(--main-btn) !important;
 
+    height: var(--main-btn) !important;
+    min-height: var(--main-btn) !important;
+
+    margin: 0 !important;
     padding: 0 !important;
 
-    z-index:
-        var(--z-search) !important;
+    z-index: var(--z-search) !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    box-sizing: border-box !important;
 
-    border-radius:
-        var(--ui-radius-sm) !important;
+    border: 1px solid var(--ui-border) !important;
 
-    background:
-        var(--ui-bg) !important;
+    border-radius: var(--ui-radius-sm) !important;
 
-    box-shadow:
-        var(--ui-shadow-sm) !important;
+    background: var(--ui-bg) !important;
+
+    color: var(--ui-text) !important;
+
+    box-shadow: var(--ui-shadow-sm) !important;
 
     font-size: 18px !important;
 
     cursor: pointer !important;
 
-    color:
-        var(--ui-text) !important;
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    white-space: normal !important;
 }
 
 
-#stage6-search-button:hover {
+#stage6-search-button:hover,
+#btn-search:hover {
 
-    background:
-        var(--ui-bg-hover) !important;
+    background: var(--ui-bg-hover) !important;
+
+    border-color: var(--ui-accent) !important;
 }
 
+
+/* ====================================================================
+   SEARCH PANEL
+   ==================================================================== */
 
 #stage6-search-panel {
 
     position: fixed !important;
 
-    top: 288px !important;
+    top: var(--search-top) !important;
 
     left:
         calc(
             var(--edge) +
-            var(--btn-h) +
-            8px
+            var(--main-btn) +
+            var(--panel-gap)
         ) !important;
+
+    right: auto !important;
 
     width: 320px !important;
 
     max-width:
         calc(100vw - 120px) !important;
 
-    z-index:
-        var(--z-search) !important;
+    z-index: var(--z-search) !important;
 
-    background:
-        var(--ui-bg) !important;
+    background: var(--ui-bg) !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    border: 1px solid var(--ui-border) !important;
 
-    border-radius:
-        var(--ui-radius) !important;
+    border-radius: var(--ui-radius) !important;
 
-    box-shadow:
-        var(--ui-shadow) !important;
+    box-shadow: var(--ui-shadow) !important;
 
-    font-family:
-        var(--ui-font) !important;
+    font-family: var(--ui-font) !important;
 
     font-size: 13px !important;
 
-    color:
-        var(--ui-text) !important;
+    color: var(--ui-text) !important;
+
+    box-sizing: border-box !important;
 }
 
+
+/* ====================================================================
+   SEARCH INPUTS
+   ==================================================================== */
 
 #stage6-search-panel select,
 #stage6-search-panel input[type="text"],
@@ -1481,34 +1534,25 @@ body {
 
     width: 100% !important;
 
-    height: 36px !important;
+    height: 30px !important;
 
-    padding:
-        7px 9px !important;
+    min-height: 30px !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    padding: 4px 7px !important;
 
-    border-radius:
-        var(--ui-radius-sm) !important;
+    box-sizing: border-box !important;
 
-    background:
-        var(--ui-bg-subtle) !important;
+    border: 1px solid var(--ui-border) !important;
 
-    font-family:
-        var(--ui-font) !important;
+    border-radius: var(--ui-radius-sm) !important;
 
-    font-size: 13px !important;
+    background: var(--ui-bg-subtle) !important;
 
-    color:
-        var(--ui-text) !important;
+    font-family: var(--ui-font) !important;
 
-    box-sizing:
-        border-box !important;
+    font-size: 11px !important;
 
-    transition:
-        border-color .15s ease,
-        box-shadow .15s ease !important;
+    color: var(--ui-text) !important;
 }
 
 
@@ -1517,32 +1561,52 @@ body {
 
     outline: none !important;
 
-    border-color:
-        var(--ui-accent) !important;
+    border-color: var(--ui-accent) !important;
 
     box-shadow:
-        0 0 0 3px
-        var(--ui-accent-soft) !important;
+        0 0 0 3px var(--ui-accent-soft) !important;
 }
 
 
+/* ====================================================================
+   SEARCH PANEL BUTTONS
+   ==================================================================== */
+
 #stage6-search-panel button {
 
-    border:
-        1px solid var(--ui-border) !important;
+    width: auto !important;
 
-    border-radius:
-        var(--ui-radius-sm) !important;
+    min-width: 0 !important;
 
-    background:
-        var(--ui-bg-subtle) !important;
+    height: 30px !important;
 
-    font-family:
-        var(--ui-font) !important;
+    min-height: 30px !important;
 
-    font-size: 13px !important;
+    padding: 4px 9px !important;
+
+    margin: 2px 2px 2px 0 !important;
+
+    box-sizing: border-box !important;
+
+    white-space: nowrap !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    font-family: var(--ui-font) !important;
+
+    font-size: 11px !important;
 
     font-weight: 600 !important;
+
+    line-height: 1.2 !important;
+
+    border: 1px solid var(--ui-border) !important;
+
+    border-radius: var(--ui-radius-sm) !important;
+
+    background: var(--ui-bg-subtle) !important;
 
     cursor: pointer !important;
 }
@@ -1550,15 +1614,17 @@ body {
 
 #stage6-search-panel button:hover {
 
-    background:
-        var(--ui-bg-active) !important;
+    background: var(--ui-bg-active) !important;
 }
 
 
+/* ====================================================================
+   SEARCH SUGGESTIONS
+   ==================================================================== */
+
 #stage6-value-suggestions {
 
-    border:
-        1px solid var(--ui-border) !important;
+    border: 1px solid var(--ui-border) !important;
 
     border-radius:
         0 0
@@ -1566,21 +1632,144 @@ body {
         var(--ui-radius-sm) !important;
 
     box-shadow:
-        0 6px 16px
-        rgba(16, 24, 40, 0.18) !important;
+        0 6px 16px rgba(16, 24, 40, 0.18) !important;
 }
 
 
 #stage6-value-suggestions > div:hover {
 
-    background:
-        var(--ui-accent-soft) !important;
+    background: var(--ui-accent-soft) !important;
 }
 
 
 /* ====================================================================
-   7. FEATURE INFO POPUP
-   COMPACT DESKTOP + MOBILE
+   8. MEASURE PANEL INTERNAL CONTROLS
+   ==================================================================== */
+
+#stage14-panel button {
+
+    width: auto !important;
+
+    min-width: 0 !important;
+
+    height: 30px !important;
+
+    min-height: 30px !important;
+
+    padding: 4px 9px !important;
+
+    margin: 2px 2px 2px 0 !important;
+
+    box-sizing: border-box !important;
+
+    white-space: nowrap !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    font-size: 11px !important;
+
+    line-height: 1.2 !important;
+}
+
+
+#stage14-panel input,
+#stage14-panel select {
+
+    height: 30px !important;
+
+    min-height: 30px !important;
+
+    padding: 4px 7px !important;
+
+    box-sizing: border-box !important;
+
+    font-size: 11px !important;
+}
+
+
+/* ====================================================================
+   9. STYLE EDITOR INTERNAL CONTROLS
+   ==================================================================== */
+
+.dynamic-style-panel button {
+
+    width: auto !important;
+
+    min-width: 0 !important;
+
+    height: 30px !important;
+
+    min-height: 30px !important;
+
+    padding: 4px 9px !important;
+
+    margin: 2px 2px 2px 0 !important;
+
+    box-sizing: border-box !important;
+
+    white-space: nowrap !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    font-size: 11px !important;
+
+    line-height: 1.2 !important;
+}
+
+
+.dynamic-style-panel input,
+.dynamic-style-panel select {
+
+    height: 30px !important;
+
+    min-height: 30px !important;
+
+    padding: 4px 7px !important;
+
+    box-sizing: border-box !important;
+
+    font-size: 11px !important;
+}
+
+
+/* ====================================================================
+   10. LAYER SWITCHER INTERNAL BUTTONS
+   ==================================================================== */
+
+#layer-switcher-content button {
+
+    width: auto !important;
+
+    min-width: 0 !important;
+
+    height: 28px !important;
+
+    min-height: 28px !important;
+
+    padding: 4px 8px !important;
+
+    margin: 2px 2px 2px 0 !important;
+
+    box-sizing: border-box !important;
+
+    white-space: nowrap !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    font-size: 10.5px !important;
+
+    line-height: 1.2 !important;
+}
+
+
+/* ====================================================================
+   11. FEATURE INFO POPUP
    ==================================================================== */
 
 #feature-info-popup {
@@ -1594,34 +1783,26 @@ body {
     max-width:
         calc(100vw - 20px) !important;
 
-    z-index:
-        var(--z-popup) !important;
+    z-index: var(--z-popup) !important;
 
-    background:
-        var(--ui-bg) !important;
+    background: var(--ui-bg) !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    border: 1px solid var(--ui-border) !important;
 
-    border-radius:
-        8px !important;
+    border-radius: 8px !important;
 
     box-shadow:
-        0 3px 12px
-        rgba(16, 24, 40, 0.20) !important;
+        0 3px 12px rgba(16, 24, 40, 0.20) !important;
 
-    font-family:
-        var(--ui-font) !important;
+    font-family: var(--ui-font) !important;
 
     font-size: 11px !important;
 
-    color:
-        var(--ui-text) !important;
+    color: var(--ui-text) !important;
 
     overflow: hidden;
 
-    box-sizing:
-        border-box !important;
+    box-sizing: border-box !important;
 }
 
 
@@ -1635,14 +1816,11 @@ body {
 
     align-items: center;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
 
-    padding:
-        7px 10px !important;
+    padding: 7px 10px !important;
 
-    min-height:
-        30px !important;
+    min-height: 30px !important;
 
     background:
         linear-gradient(
@@ -1650,8 +1828,6 @@ body {
             var(--ui-accent),
             var(--ui-accent-dark)
         ) !important;
-
-    border-bottom: none !important;
 
     color: #fff !important;
 
@@ -1664,25 +1840,26 @@ body {
 
 
 /* ====================================================================
-   POPUP CLOSE BUTTON
+   POPUP CLOSE
    ==================================================================== */
 
 #feature-popup-close {
 
     width: 24px !important;
-
-    height: 24px !important;
-
     min-width: 24px !important;
 
+    height: 24px !important;
+    min-height: 24px !important;
+
     padding: 0 !important;
+
+    margin: 0 !important;
 
     border: none !important;
 
     border-radius: 5px !important;
 
-    background:
-        rgba(255, 255, 255, 0.18) !important;
+    background: rgba(255, 255, 255, 0.18) !important;
 
     color: #fff !important;
 
@@ -1700,30 +1877,25 @@ body {
 
 #feature-popup-close:hover {
 
-    background:
-        rgba(255, 255, 255, 0.32) !important;
+    background: rgba(255, 255, 255, 0.32) !important;
 }
 
 
 /* ====================================================================
-   POPUP LAYER NAME
+   POPUP LAYER
    ==================================================================== */
 
 .feature-popup-layer {
 
-    padding:
-        5px 10px !important;
+    padding: 5px 10px !important;
 
     font-weight: 600 !important;
 
-    color:
-        var(--ui-text-muted) !important;
+    color: var(--ui-text-muted) !important;
 
-    background:
-        var(--ui-bg-subtle) !important;
+    background: var(--ui-bg-subtle) !important;
 
-    border-bottom:
-        1px solid var(--ui-border-soft) !important;
+    border-bottom: 1px solid var(--ui-border-soft) !important;
 
     font-size: 10px !important;
 
@@ -1737,32 +1909,27 @@ body {
 
 .feature-popup-content {
 
-    max-height:
-        260px !important;
+    max-height: 260px !important;
 
     overflow-y: auto !important;
 
-    padding:
-        2px 10px 3px !important;
+    padding: 2px 10px 3px !important;
 }
 
 
 /* ====================================================================
-   POPUP ATTRIBUTE ROW
+   POPUP ROW
    ==================================================================== */
 
 .feature-popup-row {
 
     display: grid !important;
 
-    grid-template-columns:
-        38% 62% !important;
+    grid-template-columns: 38% 62% !important;
 
-    border-bottom:
-        1px solid var(--ui-border-soft) !important;
+    border-bottom: 1px solid var(--ui-border-soft) !important;
 
-    padding:
-        5px 0 !important;
+    padding: 5px 0 !important;
 
     min-height: 0 !important;
 
@@ -1777,15 +1944,14 @@ body {
 
 
 /* ====================================================================
-   POPUP FIELD NAME
+   POPUP FIELD
    ==================================================================== */
 
 .feature-popup-field {
 
     font-weight: 600 !important;
 
-    color:
-        var(--ui-text-muted) !important;
+    color: var(--ui-text-muted) !important;
 
     font-size: 10px !important;
 
@@ -1797,14 +1963,9 @@ body {
 }
 
 
-/* ====================================================================
-   POPUP FIELD VALUE
-   ==================================================================== */
-
 .feature-popup-value {
 
-    color:
-        var(--ui-text) !important;
+    color: var(--ui-text) !important;
 
     font-size: 11px !important;
 
@@ -1820,103 +1981,88 @@ body {
 
 .feature-popup-buttons {
 
-    padding:
-        6px 10px !important;
+    padding: 6px 10px !important;
 
-    border-top:
-        1px solid var(--ui-border-soft) !important;
+    border-top: 1px solid var(--ui-border-soft) !important;
 
-    background:
-        var(--ui-bg-subtle) !important;
+    background: var(--ui-bg-subtle) !important;
 }
 
 
-/* ====================================================================
-   POPUP BUTTONS
-   ==================================================================== */
-
 .feature-popup-buttons button {
 
-    min-height:
-        30px !important;
+    width: auto !important;
 
-    padding:
-        5px 9px !important;
+    min-width: 0 !important;
 
-    border:
-        1px solid var(--ui-border) !important;
+    height: 29px !important;
 
-    border-radius:
-        5px !important;
+    min-height: 29px !important;
 
-    background:
-        var(--ui-bg) !important;
+    padding: 4px 9px !important;
 
-    font-family:
-        var(--ui-font) !important;
+    margin: 0 !important;
 
-    font-size: 11px !important;
+    box-sizing: border-box !important;
 
-    line-height: 1.1 !important;
+    white-space: nowrap !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+
+    font-family: var(--ui-font) !important;
+
+    font-size: 10.5px !important;
+
+    line-height: 1.2 !important;
 }
 
 
 .feature-popup-buttons button:hover {
 
-    background:
-        var(--ui-bg-hover) !important;
+    background: var(--ui-bg-hover) !important;
 }
 
 
 /* ====================================================================
-   8. BOTTOM-RIGHT : COORDINATE READOUT
+   12. COORDINATE READOUT
    ==================================================================== */
 
 .coordinates-readout {
 
     position: fixed;
 
-    bottom:
-        var(--edge);
+    bottom: var(--edge);
 
-    right:
-        var(--edge);
+    right: var(--edge);
 
-    z-index:
-        var(--z-coords);
+    z-index: var(--z-coords);
 
     display: grid;
 
-    grid-template-columns:
-        auto auto;
+    grid-template-columns: auto auto;
 
     column-gap: 0;
 
     background:
         rgba(255, 255, 255, 0.94);
 
-    backdrop-filter:
-        blur(5px);
+    backdrop-filter: blur(5px);
 
-    -webkit-backdrop-filter:
-        blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 
-    border:
-        1px solid var(--ui-border);
+    border: 1px solid var(--ui-border);
 
-    border-radius:
-        var(--ui-radius-sm);
+    border-radius: var(--ui-radius-sm);
 
-    box-shadow:
-        var(--ui-shadow-sm);
+    box-shadow: var(--ui-shadow-sm);
 
-    font-family:
-        var(--ui-font);
+    font-family: var(--ui-font);
 
     font-size: 12px;
 
-    color:
-        var(--ui-text);
+    color: var(--ui-text);
 
     overflow: hidden;
 
@@ -1940,11 +2086,9 @@ body {
 
     min-width: 105px;
 
-    padding:
-        5px 10px;
+    padding: 5px 10px;
 
-    border-right:
-        1px solid var(--ui-border-soft);
+    border-right: 1px solid var(--ui-border-soft);
 }
 
 
@@ -1964,8 +2108,7 @@ body {
 
     letter-spacing: .6px;
 
-    color:
-        var(--ui-text-faint);
+    color: var(--ui-text-faint);
 
     line-height: 1.1;
 }
@@ -1973,15 +2116,13 @@ body {
 
 .coordinates-readout .coord-value {
 
-    font-family:
-        var(--ui-mono);
+    font-family: var(--ui-mono);
 
     font-size: 12px;
 
     font-weight: 600;
 
-    color:
-        var(--ui-text);
+    color: var(--ui-text);
 
     white-space: nowrap;
 
@@ -2002,20 +2143,16 @@ body {
 
 
 /* ====================================================================
-   9. MOBILE
+   13. MOBILE — MAX WIDTH 600px
    ==================================================================== */
 
 @media (max-width: 600px) {
-
-    /* ================================================================
-       MOBILE VARIABLES
-       ================================================================ */
 
     :root {
 
         --mobile-edge: 12px;
 
-        --mobile-btn: 44px;
+        --mobile-btn: 40px;
 
         --mobile-panel-gap: 8px;
 
@@ -2028,41 +2165,37 @@ body {
     }
 
 
-    /* ================================================================
+    /* ---------------------------------------------------------------
        NORTH
-       ================================================================ */
+       --------------------------------------------------------------- */
 
     .stage15-north-symbol {
 
+        position: fixed !important;
+
+        top: 12px !important;
+        right: 12px !important;
+
         width: 48px !important;
-
         height: 48px !important;
-
-        top:
-            var(--edge) !important;
-
-        right:
-            var(--edge) !important;
     }
 
 
     .stage15-north-letter {
 
-        font-size:
-            16px !important;
+        font-size: 16px !important;
     }
 
 
     .stage15-north-arrow {
 
-        transform:
-            scale(.88);
+        transform: scale(.88);
     }
 
 
-    /* ================================================================
+    /* ---------------------------------------------------------------
        LAYER SWITCHER
-       ================================================================ */
+       --------------------------------------------------------------- */
 
     .layer-switcher {
 
@@ -2070,58 +2203,38 @@ body {
 
         top:
             calc(
-                var(--edge) +
+                12px +
                 48px +
                 10px
             ) !important;
 
-        right:
-            var(--edge) !important;
+        right: 12px !important;
 
-        width:
-            46px !important;
-
-        height:
-            46px !important;
-
-        max-width:
-            none !important;
-
-        max-height:
-            none !important;
-
-        z-index:
-            var(--z-layer-switcher) !important;
-
-        overflow:
-            visible !important;
+        width: 46px !important;
+        height: 46px !important;
     }
 
 
     .layer-switcher-header {
 
-        width:
-            46px !important;
+        width: 46px !important;
+        min-width: 46px !important;
 
-        height:
-            46px !important;
+        height: 46px !important;
+        min-height: 46px !important;
     }
 
 
     .layer-switcher-title::before {
 
-        width:
-            26px !important;
-
-        height:
-            26px !important;
+        width: 26px !important;
+        height: 26px !important;
     }
 
 
     #layer-switcher-content {
 
-        width:
-            230px !important;
+        width: 230px !important;
 
         max-width:
             calc(100vw - 20px) !important;
@@ -2129,981 +2242,29 @@ body {
         max-height:
             calc(100vh - 130px) !important;
 
-        overflow-y:
-            auto !important;
+        overflow-y: auto !important;
     }
 
 
-    /* ================================================================
-       LEFT CONTROL RAIL
-       ================================================================ */
+    /* ---------------------------------------------------------------
+       ZOOM
+       --------------------------------------------------------------- */
 
     .ol-zoom {
 
         position: fixed !important;
 
-        top:
-            var(--mobile-edge) !important;
+        top: 12px !important;
+        left: 12px !important;
 
-        left:
-            var(--mobile-edge) !important;
+        width: 40px !important;
+        height: 80px !important;
 
-        z-index:
-            16000 !important;
+        z-index: 16000 !important;
     }
 
 
-    /* ================================================================
-       MEASURE BUTTON
-       ================================================================ */
-
-    #stage14-control {
-
-        position: fixed !important;
-
-        top:
-            132px !important;
-
-        left:
-            var(--mobile-edge) !important;
-
-        width:
-            var(--mobile-btn) !important;
-
-        height:
-            var(--mobile-btn) !important;
-
-        z-index:
-            var(--z-measure) !important;
-    }
-
-
-    #stage14-measure-button {
-
-        width:
-            var(--mobile-btn) !important;
-
-        height:
-            var(--mobile-btn) !important;
-
-        margin: 0 !important;
-    }
-
-
-    /* ================================================================
-       MEASURE PANEL
-       ================================================================ */
-
-    #stage14-panel {
-
-        position: fixed !important;
-
-        top:
-            132px !important;
-
-        left:
-            var(--mobile-panel-left) !important;
-
-        right:
-            auto !important;
-
-        bottom:
-            auto !important;
-
-        width:
-            calc(
-                100vw -
-                var(--mobile-panel-left) -
-                var(--mobile-edge)
-            ) !important;
-
-        max-width:
-            calc(
-                100vw -
-                var(--mobile-panel-left) -
-                var(--mobile-edge)
-            ) !important;
-
-        max-height:
-            calc(100vh - 150px) !important;
-
-        overflow-y:
-            auto !important;
-
-        box-sizing:
-            border-box !important;
-
-        z-index:
-            var(--z-measure) !important;
-    }
-
-
-    /* ================================================================
-       LOCATION
-       ================================================================ */
-
-    .ol-control.geolocate {
-
-        position: fixed !important;
-
-        top:
-            184px !important;
-
-        left:
-            var(--mobile-edge) !important;
-
-        width:
-            var(--mobile-btn) !important;
-
-        height:
-            var(--mobile-btn) !important;
-
-        z-index:
-            var(--z-geolocate) !important;
-    }
-
-
-    .geolocate-button {
-
-        width:
-            var(--mobile-btn) !important;
-
-        height:
-            var(--mobile-btn) !important;
-    }
-
-
-    /* ================================================================
-       STYLE EDITOR BUTTON
-       ================================================================ */
-
-    .dynamic-style-control {
-
-        position: fixed !important;
-
-        top:
-            236px !important;
-
-        left:
-            var(--mobile-edge) !important;
-
-        right:
-            auto !important;
-
-        width:
-            var(--mobile-btn) !important;
-
-        height:
-            var(--mobile-btn) !important;
-
-        z-index:
-            var(--z-styleditor) !important;
-    }
-
-
-    .dynamic-style-control > button {
-
-        width:
-            var(--mobile-btn) !important;
-
-        height:
-            var(--mobile-btn) !important;
-    }
-
-
-    /* ================================================================
-       STYLE EDITOR PANEL
-       ================================================================ */
-
-    .dynamic-style-panel {
-
-        position: fixed !important;
-
-        top:
-            236px !important;
-
-        left:
-            var(--mobile-panel-left) !important;
-
-        right:
-            auto !important;
-
-        width:
-            calc(
-                100vw -
-                var(--mobile-panel-left) -
-                var(--mobile-edge)
-            ) !important;
-
-        max-width:
-            calc(
-                100vw -
-                var(--mobile-panel-left) -
-                var(--mobile-edge)
-            ) !important;
-
-        max-height:
-            calc(100vh - 150px) !important;
-
-        overflow-x:
-            hidden !important;
-
-        overflow-y:
-            auto !important;
-
-        box-sizing:
-            border-box !important;
-
-        z-index:
-            30000 !important;
-    }
-
-
-    /* ================================================================
-       STYLE EDITOR — COMPACT
-       ================================================================ */
-
-    .dynamic-style-panel {
-
-        padding:
-            10px !important;
-
-        border-radius:
-            8px !important;
-    }
-
-
-    .dynamic-style-title {
-
-        font-size:
-            14px !important;
-
-        margin-bottom:
-            8px !important;
-
-        padding-bottom:
-            6px !important;
-    }
-
-
-    .dynamic-style-row {
-
-        gap:
-            6px !important;
-
-        margin-bottom:
-            7px !important;
-    }
-
-
-    .dynamic-style-row select {
-
-        width:
-            145px !important;
-
-        max-width:
-            145px !important;
-
-        height:
-            34px !important;
-
-        font-size:
-            12px !important;
-    }
-
-
-    .dynamic-style-row input[type="number"] {
-
-        width:
-            70px !important;
-
-        height:
-            32px !important;
-    }
-
-
-    .dynamic-style-row input[type="color"] {
-
-        width:
-            42px !important;
-
-        height:
-            30px !important;
-    }
-
-
-    .dynamic-style-category-values {
-
-        max-height:
-            220px !important;
-
-        padding:
-            2px !important;
-    }
-
-
-    .dynamic-category-row {
-
-        min-height:
-            34px !important;
-
-        padding:
-            4px 5px !important;
-
-        gap:
-            6px !important;
-    }
-
-
-    .dynamic-category-name {
-
-        font-size:
-            11px !important;
-
-        line-height:
-            1.2 !important;
-    }
-
-
-    .dynamic-category-color {
-
-        width:
-            38px !important;
-
-        min-width:
-            38px !important;
-
-        height:
-            27px !important;
-    }
-
-
-    .dynamic-style-buttons {
-
-        gap:
-            6px !important;
-
-        margin-top:
-            9px !important;
-    }
-
-
-    .dynamic-style-buttons button {
-
-        min-height:
-            38px !important;
-
-        padding:
-            7px !important;
-
-        font-size:
-            12px !important;
-    }
-
-
-    /* ================================================================
-       SEARCH BUTTON
-       ================================================================ */
-
-    #stage6-search-button,
-    #btn-search {
-
-        position: fixed !important;
-
-        top:
-            288px !important;
-
-        left:
-            var(--mobile-edge) !important;
-
-        width:
-            var(--mobile-btn) !important;
-
-        height:
-            var(--mobile-btn) !important;
-
-        padding:
-            0 !important;
-
-        z-index:
-            var(--z-search) !important;
-    }
-
-
-    /* ================================================================
-       SEARCH PANEL
-       ================================================================ */
-
-    #stage6-search-panel {
-
-        position: fixed !important;
-
-        top:
-            288px !important;
-
-        left:
-            var(--mobile-panel-left) !important;
-
-        right:
-            auto !important;
-
-        width:
-            calc(
-                100vw -
-                var(--mobile-panel-left) -
-                var(--mobile-edge)
-            ) !important;
-
-        max-width:
-            calc(
-                100vw -
-                var(--mobile-panel-left) -
-                var(--mobile-edge)
-            ) !important;
-
-        max-height:
-            calc(100vh - 150px) !important;
-
-        overflow-y:
-            auto !important;
-
-        box-sizing:
-            border-box !important;
-
-        z-index:
-            var(--z-search) !important;
-    }
-
-
-    /* ================================================================
-       SEARCH FORM
-       ================================================================ */
-
-    #stage6-search-panel select,
-    #stage6-search-panel input[type="text"],
-    #stage6-search-panel input {
-
-        width:
-            100% !important;
-
-        max-width:
-            100% !important;
-
-        box-sizing:
-            border-box !important;
-    }
-
-
-    #stage6-search-panel button {
-
-        min-height:
-            36px !important;
-    }
-
-
-    /* ================================================================
-       COMPACT FEATURE POPUP
-       ================================================================ */
-
-    #feature-info-popup {
-
-        width:
-            280px !important;
-
-        max-width:
-            calc(100vw - 16px) !important;
-
-        border-radius:
-            7px !important;
-
-        font-size:
-            10.5px !important;
-    }
-
-
-    /* ------------------------------------------------------------
-       HEADER
-       ------------------------------------------------------------ */
-
-    .feature-popup-header {
-
-        padding:
-            6px 9px !important;
-
-        min-height:
-            28px !important;
-
-        font-size:
-            12px !important;
-    }
-
-
-    #feature-popup-close {
-
-        width:
-            23px !important;
-
-        height:
-            23px !important;
-
-        min-width:
-            23px !important;
-
-        font-size:
-            16px !important;
-    }
-
-
-    /* ------------------------------------------------------------
-       LAYER
-       ------------------------------------------------------------ */
-
-    .feature-popup-layer {
-
-        padding:
-            4px 9px !important;
-
-        font-size:
-            9.5px !important;
-    }
-
-
-    /* ------------------------------------------------------------
-       CONTENT
-       ------------------------------------------------------------ */
-
-    .feature-popup-content {
-
-        max-height:
-            230px !important;
-
-        padding:
-            1px 9px 2px !important;
-    }
-
-
-    /* ------------------------------------------------------------
-       ATTRIBUTE ROW
-       ------------------------------------------------------------ */
-
-    .feature-popup-row {
-
-        grid-template-columns:
-            37% 63% !important;
-
-        padding:
-            4px 0 !important;
-
-        line-height:
-            1.2 !important;
-    }
-
-
-    /* ------------------------------------------------------------
-       FIELD
-       ------------------------------------------------------------ */
-
-    .feature-popup-field {
-
-        font-size:
-            9.5px !important;
-
-        line-height:
-            1.2 !important;
-
-        padding-right:
-            4px !important;
-    }
-
-
-    /* ------------------------------------------------------------
-       VALUE
-       ------------------------------------------------------------ */
-
-    .feature-popup-value {
-
-        font-size:
-            10.5px !important;
-
-        line-height:
-            1.2 !important;
-    }
-
-
-    /* ------------------------------------------------------------
-       BUTTON AREA
-       ------------------------------------------------------------ */
-
-    .feature-popup-buttons {
-
-        padding:
-            5px 9px !important;
-    }
-
-
-    .feature-popup-buttons button {
-
-        min-height:
-            28px !important;
-
-        padding:
-            4px 8px !important;
-
-        font-size:
-            10.5px !important;
-    }
-
-
-    /* ================================================================
-       COORDINATES
-       ================================================================ */
-
-    .coordinates-readout {
-
-        bottom:
-            8px !important;
-
-        right:
-            8px !important;
-
-        font-size:
-            10px !important;
-
-        border-radius:
-            7px !important;
-    }
-
-
-    .coordinates-readout .coord {
-
-        min-width:
-            88px !important;
-
-        padding:
-            4px 7px !important;
-
-        gap:
-            1px !important;
-    }
-
-
-    .coordinates-readout .coord-label {
-
-        font-size:
-            8px !important;
-
-        letter-spacing:
-            .5px !important;
-    }
-
-
-    .coordinates-readout .coord-value {
-
-        font-size:
-            10px !important;
-    }
-
-
-    .coordinates-readout .coord-value.utm {
-
-        font-size:
-            9.5px !important;
-    }
-
-
-    .coordinates-readout .coord-value.latlon {
-
-        font-size:
-            10px !important;
-    }
-
-}
-
-
-/* ====================================================================
-   10. VERY SMALL PHONES
-   ==================================================================== */
-
-@media (max-width: 380px) {
-
-    .dynamic-style-panel {
-
-        left:
-            60px !important;
-
-        right:
-            6px !important;
-
-        top:
-            236px !important;
-
-        max-height:
-            calc(100vh - 242px) !important;
-
-        padding:
-            8px !important;
-    }
-
-
-    .dynamic-style-row select {
-
-        width:
-            125px !important;
-
-        max-width:
-            125px !important;
-    }
-
-
-    .dynamic-style-row label {
-
-        font-size:
-            11px !important;
-    }
-
-
-    .dynamic-style-category-values {
-
-        max-height:
-            180px !important;
-    }
-
-
-    .dynamic-category-name {
-
-        font-size:
-            10px !important;
-    }
-
-
-    /* ================================================================
-       EXTRA COMPACT POPUP
-       ================================================================ */
-
-    #feature-info-popup {
-
-        width:
-            265px !important;
-
-        max-width:
-            calc(100vw - 12px) !important;
-    }
-
-
-    .feature-popup-header {
-
-        padding:
-            5px 8px !important;
-
-        min-height:
-            26px !important;
-
-        font-size:
-            11.5px !important;
-    }
-
-
-    .feature-popup-layer {
-
-        padding:
-            3px 8px !important;
-
-        font-size:
-            9px !important;
-    }
-
-
-    .feature-popup-content {
-
-        max-height:
-            210px !important;
-
-        padding:
-            1px 8px 2px !important;
-    }
-
-
-    .feature-popup-row {
-
-        grid-template-columns:
-            35% 65% !important;
-
-        padding:
-            3px 0 !important;
-    }
-
-
-    .feature-popup-field {
-
-        font-size:
-            9px !important;
-    }
-
-
-    .feature-popup-value {
-
-        font-size:
-            10px !important;
-    }
-
-
-    .feature-popup-buttons {
-
-        padding:
-            4px 8px !important;
-    }
-
-
-    .feature-popup-buttons button {
-
-        min-height:
-            27px !important;
-
-        padding:
-            3px 7px !important;
-
-        font-size:
-            10px !important;
-    }
-
-}
-
-
-
-
-
-/* ============================================================
-   🔘 BUTTONS — SIZE AUTOMATICALLY ACCORDING TO TEXT
-   ============================================================ */
-
-/* General buttons */
-.ui-btn,
-.ol-control button,
-.ol-control a,
-button {
-    width: auto !important;
-    min-width: 40px !important;
-    height: 36px !important;
-    min-height: 36px !important;
-
-    padding: 6px 10px !important;
-
-    box-sizing: border-box !important;
-
-    white-space: nowrap !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-
-    font-size: 12px !important;
-    line-height: 1.2 !important;
-}
-
-
-/* Buttons containing icons only */
-.ol-zoom button,
-#stage14-measure-button,
-.geolocate-button,
-#stage6-search-button,
-#btn-search,
-.dynamic-style-control button,
-.layer-switcher-header {
-
-    width: 40px !important;
-    min-width: 40px !important;
-
-    height: 40px !important;
-    min-height: 40px !important;
-
-    padding: 0 !important;
-
-    white-space: normal !important;
-}
-
-
-/* Search / Measure / Style panel buttons */
-#stage6-search-panel button,
-#stage14-panel button,
-.dynamic-style-panel button {
-
-    width: auto !important;
-    min-width: 40px !important;
-
-    height: 31px !important;
-    min-height: 31px !important;
-
-    padding: 5px 9px !important;
-
-    white-space: nowrap !important;
-
-    font-size: 11px !important;
-}
-
-
-/* Layer switcher buttons */
-.layer-switcher button {
-
-    width: auto !important;
-    min-width: 40px !important;
-
-    height: 28px !important;
-    min-height: 28px !important;
-
-    padding: 4px 8px !important;
-
-    white-space: nowrap !important;
-
-    font-size: 10.5px !important;
-}
-
-
-/* Popup buttons */
-.feature-popup-buttons button {
-
-    width: auto !important;
-    min-width: 40px !important;
-
-    height: 29px !important;
-    min-height: 29px !important;
-
-    padding: 4px 9px !important;
-
-    white-space: nowrap !important;
-
-    font-size: 10.5px !important;
-}
-
-
-/* ============================================================
-   📱 MOBILE
-   ============================================================ */
-
-@media (max-width: 600px) {
-
-    /* Text buttons */
-    .ui-btn,
-    button {
-
-        width: auto !important;
-        min-width: 38px !important;
-
-        height: 34px !important;
-        min-height: 34px !important;
-
-        padding: 5px 8px !important;
-
-        font-size: 11px !important;
-
-        white-space: nowrap !important;
-    }
-
-
-    /* Icon-only map controls */
-    .ol-zoom button,
-    #stage14-measure-button,
-    .geolocate-button,
-    #stage6-search-button,
-    #btn-search,
-    .dynamic-style-control button {
+    .ol-zoom button {
 
         width: 40px !important;
         min-width: 40px !important;
@@ -3115,268 +2276,377 @@ button {
     }
 
 
-    /* Panel buttons */
-    #stage6-search-panel button,
-    #stage14-panel button,
-    .dynamic-style-panel button {
+    /* ---------------------------------------------------------------
+       MEASURE
+       --------------------------------------------------------------- */
 
-        width: auto !important;
-        min-width: 38px !important;
+    #stage14-control {
 
-        height: 30px !important;
-        min-height: 30px !important;
+        position: fixed !important;
 
-        padding: 4px 8px !important;
+        top: 132px !important;
+        left: 12px !important;
 
-        font-size: 10.5px !important;
-
-        white-space: nowrap !important;
+        width: 40px !important;
+        height: 40px !important;
     }
 
 
-    /* Layer buttons */
-    .layer-switcher button {
+    #stage14-measure-button {
 
-        width: auto !important;
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       MEASURE PANEL
+       --------------------------------------------------------------- */
+
+    #stage14-panel {
+
+        position: fixed !important;
+
+        top: 132px !important;
+
+        left:
+            var(--mobile-panel-left) !important;
+
+        right: auto !important;
+        bottom: auto !important;
+
+        width:
+            calc(
+                100vw -
+                var(--mobile-panel-left) -
+                var(--mobile-edge)
+            ) !important;
+
+        max-width:
+            calc(
+                100vw -
+                var(--mobile-panel-left) -
+                var(--mobile-edge)
+            ) !important;
+
+        max-height:
+            calc(100vh - 150px) !important;
+
+        overflow-y: auto !important;
+
+        box-sizing: border-box !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       LOCATION
+       --------------------------------------------------------------- */
+
+    .ol-control.geolocate {
+
+        position: fixed !important;
+
+        top: 184px !important;
+        left: 12px !important;
+
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+
+    .geolocate-button {
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        padding: 0 !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       STYLE EDITOR CONTROL
+       --------------------------------------------------------------- */
+
+    .dynamic-style-control {
+
+        position: fixed !important;
+
+        top: 236px !important;
+        left: 12px !important;
+
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+
+    .dynamic-style-control > button {
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        padding: 0 !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       DIRECT STYLE BUTTON
+       --------------------------------------------------------------- */
+
+    #dynamic-style-open-button {
+
+        position: fixed !important;
+
+        top: 236px !important;
+        left: 12px !important;
+
+        right: auto !important;
+        bottom: auto !important;
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        padding: 0 !important;
+
+        margin: 0 !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       STYLE PANEL
+       --------------------------------------------------------------- */
+
+    .dynamic-style-panel {
+
+        position: fixed !important;
+
+        top: 236px !important;
+
+        left:
+            var(--mobile-panel-left) !important;
+
+        right: auto !important;
+
+        width:
+            calc(
+                100vw -
+                var(--mobile-panel-left) -
+                var(--mobile-edge)
+            ) !important;
+
+        max-width:
+            calc(
+                100vw -
+                var(--mobile-panel-left) -
+                var(--mobile-edge)
+            ) !important;
+
+        max-height:
+            calc(100vh - 150px) !important;
+
+        padding: 10px !important;
+
+        overflow-x: hidden !important;
+
+        overflow-y: auto !important;
+
+        box-sizing: border-box !important;
+
+        border-radius: 8px !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       STYLE PANEL CONTENT
+       --------------------------------------------------------------- */
+
+    .dynamic-style-title {
+
+        font-size: 14px !important;
+
+        margin-bottom: 8px !important;
+
+        padding-bottom: 6px !important;
+    }
+
+
+    .dynamic-style-row {
+
+        gap: 6px !important;
+
+        margin-bottom: 7px !important;
+    }
+
+
+    .dynamic-style-row select {
+
+        width: 145px !important;
+
+        max-width: 145px !important;
+
+        height: 30px !important;
+
+        font-size: 12px !important;
+    }
+
+
+    .dynamic-style-row input[type="number"] {
+
+        width: 70px !important;
+
+        height: 30px !important;
+    }
+
+
+    .dynamic-style-row input[type="color"] {
+
+        width: 42px !important;
+
+        height: 30px !important;
+    }
+
+
+    .dynamic-style-category-values {
+
+        max-height: 220px !important;
+
+        padding: 2px !important;
+    }
+
+
+    .dynamic-category-row {
+
+        min-height: 34px !important;
+
+        padding: 4px 5px !important;
+
+        gap: 6px !important;
+    }
+
+
+    .dynamic-category-name {
+
+        font-size: 11px !important;
+
+        line-height: 1.2 !important;
+    }
+
+
+    .dynamic-category-color {
+
+        width: 38px !important;
+
         min-width: 38px !important;
 
         height: 27px !important;
-        min-height: 27px !important;
-
-        padding: 4px 7px !important;
-
-        font-size: 10px !important;
     }
 
 
-    /* Popup buttons */
-    .feature-popup-buttons button {
+    .dynamic-style-buttons {
 
-        width: auto !important;
-        min-width: 38px !important;
+        gap: 6px !important;
 
-        height: 28px !important;
-        min-height: 28px !important;
-
-        padding: 4px 7px !important;
-
-        font-size: 10px !important;
+        margin-top: 9px !important;
     }
 
-}/* ============================================================
-   🔘 COMPACT TOOL-PANEL BUTTONS
-   ------------------------------------------------------------
-   Only affects buttons INSIDE the tool panels.
-   Main map controls are NOT changed.
-   ============================================================ */
 
+    .dynamic-style-buttons button {
 
-/* ============================================================
-   1. SEARCH TOOL
-   ============================================================ */
-
-#stage6-search-panel button {
-
-    width: auto !important;
-    min-width: 0 !important;
-
-    height: 30px !important;
-    min-height: 30px !important;
-
-    padding: 4px 9px !important;
-
-    margin: 2px 2px 2px 0 !important;
-
-    box-sizing: border-box !important;
-
-    white-space: nowrap !important;
-
-    font-size: 11px !important;
-
-    line-height: 1.2 !important;
-}
-
-
-/* Search inputs/selects */
-
-#stage6-search-panel input,
-#stage6-search-panel select {
-
-    height: 30px !important;
-    min-height: 30px !important;
-
-    padding: 4px 7px !important;
-
-    font-size: 11px !important;
-
-    box-sizing: border-box !important;
-}
-
-
-/* ============================================================
-   2. MEASURE TOOL
-   ============================================================ */
-
-#stage14-panel button {
-
-    width: auto !important;
-    min-width: 0 !important;
-
-    height: 30px !important;
-    min-height: 30px !important;
-
-    padding: 4px 9px !important;
-
-    margin: 2px 2px 2px 0 !important;
-
-    box-sizing: border-box !important;
-
-    white-space: nowrap !important;
-
-    font-size: 11px !important;
-
-    line-height: 1.2 !important;
-}
-
-
-/* Measure inputs/selects */
-
-#stage14-panel input,
-#stage14-panel select {
-
-    height: 30px !important;
-    min-height: 30px !important;
-
-    padding: 4px 7px !important;
-
-    font-size: 11px !important;
-
-    box-sizing: border-box !important;
-}
-
-
-/* ============================================================
-   3. LAYER STYLING / STYLE EDITOR
-   ============================================================ */
-
-.dynamic-style-panel button {
-
-    width: auto !important;
-    min-width: 0 !important;
-
-    height: 30px !important;
-    min-height: 30px !important;
-
-    padding: 4px 9px !important;
-
-    margin: 2px 2px 2px 0 !important;
-
-    box-sizing: border-box !important;
-
-    white-space: nowrap !important;
-
-    font-size: 11px !important;
-
-    line-height: 1.2 !important;
-}
-
-
-/* Style editor inputs/selects */
-
-.dynamic-style-panel input,
-.dynamic-style-panel select {
-
-    height: 30px !important;
-    min-height: 30px !important;
-
-    padding: 4px 7px !important;
-
-    font-size: 11px !important;
-
-    box-sizing: border-box !important;
-}
-
-
-/* ============================================================
-   4. LAYER SWITCHER INTERNAL BUTTONS
-   ============================================================ */
-
-#layer-switcher-content button {
-
-    width: auto !important;
-    min-width: 0 !important;
-
-    height: 28px !important;
-    min-height: 28px !important;
-
-    padding: 4px 8px !important;
-
-    margin: 2px 2px 2px 0 !important;
-
-    box-sizing: border-box !important;
-
-    white-space: nowrap !important;
-
-    font-size: 10.5px !important;
-
-    line-height: 1.2 !important;
-}
-
-
-/* ============================================================
-   5. FEATURE POPUP BUTTONS
-   ============================================================ */
-
-.feature-popup-buttons button {
-
-    width: auto !important;
-    min-width: 0 !important;
-
-    height: 29px !important;
-    min-height: 29px !important;
-
-    padding: 4px 9px !important;
-
-    margin: 0 !important;
-
-    white-space: nowrap !important;
-
-    font-size: 10.5px !important;
-
-    line-height: 1.2 !important;
-
-    box-sizing: border-box !important;
-}
-
-
-/* ============================================================
-   6. MOBILE — SEARCH
-   ============================================================ */
-
-@media (max-width: 600px) {
-
-    #stage6-search-panel button {
-
-        width: auto !important;
-        min-width: 0 !important;
-
-        height: 29px !important;
         min-height: 29px !important;
 
+        height: 29px !important;
+
         padding: 4px 7px !important;
 
-        margin: 2px 2px 2px 0 !important;
-
         font-size: 10px !important;
+    }
 
-        white-space: nowrap !important;
+
+    /* ---------------------------------------------------------------
+       SEARCH
+       --------------------------------------------------------------- */
+
+    #stage6-search-button,
+    #btn-search {
+
+        position: fixed !important;
+
+        top: 288px !important;
+        left: 12px !important;
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        padding: 0 !important;
+
+        margin: 0 !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       SEARCH PANEL
+       --------------------------------------------------------------- */
+
+    #stage6-search-panel {
+
+        position: fixed !important;
+
+        top: 288px !important;
+
+        left:
+            var(--mobile-panel-left) !important;
+
+        right: auto !important;
+
+        width:
+            calc(
+                100vw -
+                var(--mobile-panel-left) -
+                var(--mobile-edge)
+            ) !important;
+
+        max-width:
+            calc(
+                100vw -
+                var(--mobile-panel-left) -
+                var(--mobile-edge)
+            ) !important;
+
+        max-height:
+            calc(100vh - 150px) !important;
+
+        overflow-y: auto !important;
+
+        box-sizing: border-box !important;
     }
 
 
     #stage6-search-panel input,
     #stage6-search-panel select {
 
+        width: 100% !important;
+
+        max-width: 100% !important;
+
         height: 29px !important;
+
         min-height: 29px !important;
 
         padding: 4px 6px !important;
@@ -3385,16 +2655,14 @@ button {
     }
 
 
-    /* ========================================================
-       7. MOBILE — MEASURE
-       ======================================================== */
-
-    #stage14-panel button {
+    #stage6-search-panel button {
 
         width: auto !important;
+
         min-width: 0 !important;
 
         height: 29px !important;
+
         min-height: 29px !important;
 
         padding: 4px 7px !important;
@@ -3402,8 +2670,28 @@ button {
         margin: 2px 2px 2px 0 !important;
 
         font-size: 10px !important;
+    }
 
-        white-space: nowrap !important;
+
+    /* ---------------------------------------------------------------
+       MEASURE PANEL BUTTONS
+       --------------------------------------------------------------- */
+
+    #stage14-panel button {
+
+        width: auto !important;
+
+        min-width: 0 !important;
+
+        height: 29px !important;
+
+        min-height: 29px !important;
+
+        padding: 4px 7px !important;
+
+        margin: 2px 2px 2px 0 !important;
+
+        font-size: 10px !important;
     }
 
 
@@ -3411,6 +2699,7 @@ button {
     #stage14-panel select {
 
         height: 29px !important;
+
         min-height: 29px !important;
 
         padding: 4px 6px !important;
@@ -3419,16 +2708,18 @@ button {
     }
 
 
-    /* ========================================================
-       8. MOBILE — LAYER STYLING
-       ======================================================== */
+    /* ---------------------------------------------------------------
+       STYLE PANEL BUTTONS
+       --------------------------------------------------------------- */
 
     .dynamic-style-panel button {
 
         width: auto !important;
+
         min-width: 0 !important;
 
         height: 29px !important;
+
         min-height: 29px !important;
 
         padding: 4px 7px !important;
@@ -3436,8 +2727,6 @@ button {
         margin: 2px 2px 2px 0 !important;
 
         font-size: 10px !important;
-
-        white-space: nowrap !important;
     }
 
 
@@ -3445,6 +2734,7 @@ button {
     .dynamic-style-panel select {
 
         height: 29px !important;
+
         min-height: 29px !important;
 
         padding: 4px 6px !important;
@@ -3453,16 +2743,18 @@ button {
     }
 
 
-    /* ========================================================
-       9. MOBILE — LAYER SWITCHER
-       ======================================================== */
+    /* ---------------------------------------------------------------
+       LAYER SWITCHER INTERNAL BUTTONS
+       --------------------------------------------------------------- */
 
     #layer-switcher-content button {
 
         width: auto !important;
+
         min-width: 0 !important;
 
         height: 27px !important;
+
         min-height: 27px !important;
 
         padding: 3px 7px !important;
@@ -3470,48 +2762,831 @@ button {
         margin: 2px 2px 2px 0 !important;
 
         font-size: 10px !important;
-
-        white-space: nowrap !important;
     }
 
 
-    /* ========================================================
-       10. MOBILE — POPUP BUTTONS
-       ======================================================== */
+    /* ---------------------------------------------------------------
+       FEATURE POPUP
+       --------------------------------------------------------------- */
+
+    #feature-info-popup {
+
+        width: 280px !important;
+
+        max-width:
+            calc(100vw - 16px) !important;
+
+        border-radius: 7px !important;
+
+        font-size: 10.5px !important;
+    }
+
+
+    .feature-popup-header {
+
+        padding: 6px 9px !important;
+
+        min-height: 28px !important;
+
+        font-size: 12px !important;
+    }
+
+
+    #feature-popup-close {
+
+        width: 23px !important;
+        min-width: 23px !important;
+
+        height: 23px !important;
+        min-height: 23px !important;
+
+        font-size: 16px !important;
+    }
+
+
+    .feature-popup-layer {
+
+        padding: 4px 9px !important;
+
+        font-size: 9.5px !important;
+    }
+
+
+    .feature-popup-content {
+
+        max-height: 230px !important;
+
+        padding: 1px 9px 2px !important;
+    }
+
+
+    .feature-popup-row {
+
+        grid-template-columns: 37% 63% !important;
+
+        padding: 4px 0 !important;
+
+        line-height: 1.2 !important;
+    }
+
+
+    .feature-popup-field {
+
+        font-size: 9.5px !important;
+
+        line-height: 1.2 !important;
+
+        padding-right: 4px !important;
+    }
+
+
+    .feature-popup-value {
+
+        font-size: 10.5px !important;
+
+        line-height: 1.2 !important;
+    }
+
+
+    .feature-popup-buttons {
+
+        padding: 5px 9px !important;
+    }
+
 
     .feature-popup-buttons button {
 
         width: auto !important;
+
         min-width: 0 !important;
 
         height: 28px !important;
+
         min-height: 28px !important;
 
         padding: 4px 7px !important;
 
-        font-size: 10px !important;
+        margin: 0 !important;
 
-        white-space: nowrap !important;
+        font-size: 10px !important;
     }
 
+
+    /* ---------------------------------------------------------------
+       COORDINATES
+       --------------------------------------------------------------- */
+
+    .coordinates-readout {
+
+        bottom: 8px !important;
+
+        right: 8px !important;
+
+        font-size: 10px !important;
+
+        border-radius: 7px !important;
+    }
+
+
+    .coordinates-readout .coord {
+
+        min-width: 88px !important;
+
+        padding: 4px 7px !important;
+
+        gap: 1px !important;
+    }
+
+
+    .coordinates-readout .coord-label {
+
+        font-size: 8px !important;
+
+        letter-spacing: .5px !important;
+    }
+
+
+    .coordinates-readout .coord-value {
+
+        font-size: 10px !important;
+    }
+
+
+    .coordinates-readout .coord-value.utm {
+
+        font-size: 9.5px !important;
+    }
+
+
+    .coordinates-readout .coord-value.latlon {
+
+        font-size: 10px !important;
+    }
 }
 
 
-/* ============================================================
-   11. PREVENT LONG TEXT FROM MAKING BUTTONS TOO LARGE
-   ============================================================ */
+/* ====================================================================
+   14. VERY SMALL PHONES
+   ==================================================================== */
 
-#stage6-search-panel button,
-#stage14-panel button,
-.dynamic-style-panel button,
-#layer-switcher-content button,
-.feature-popup-buttons button {
+@media (max-width: 380px) {
 
-    max-width: 100% !important;
+    .dynamic-style-panel {
 
-    overflow: hidden !important;
+        left: 60px !important;
 
-    text-overflow: ellipsis !important;
+        right: 6px !important;
+
+        top: 236px !important;
+
+        width: auto !important;
+
+        max-width: none !important;
+
+        max-height:
+            calc(100vh - 242px) !important;
+
+        padding: 8px !important;
+    }
+
+
+    .dynamic-style-row select {
+
+        width: 125px !important;
+
+        max-width: 125px !important;
+    }
+
+
+    .dynamic-style-row label {
+
+        font-size: 11px !important;
+    }
+
+
+    .dynamic-style-category-values {
+
+        max-height: 180px !important;
+    }
+
+
+    .dynamic-category-name {
+
+        font-size: 10px !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       POPUP
+       --------------------------------------------------------------- */
+
+    #feature-info-popup {
+
+        width: 265px !important;
+
+        max-width:
+            calc(100vw - 12px) !important;
+    }
+
+
+    .feature-popup-header {
+
+        padding: 5px 8px !important;
+
+        min-height: 26px !important;
+
+        font-size: 11.5px !important;
+    }
+
+
+    .feature-popup-layer {
+
+        padding: 3px 8px !important;
+
+        font-size: 9px !important;
+    }
+
+
+    .feature-popup-content {
+
+        max-height: 210px !important;
+
+        padding: 1px 8px 2px !important;
+    }
+
+
+    .feature-popup-row {
+
+        grid-template-columns: 35% 65% !important;
+
+        padding: 3px 0 !important;
+    }
+
+
+    .feature-popup-field {
+
+        font-size: 9px !important;
+    }
+
+
+    .feature-popup-value {
+
+        font-size: 10px !important;
+    }
+
+
+    .feature-popup-buttons {
+
+        padding: 4px 8px !important;
+    }
+
+
+    .feature-popup-buttons button {
+
+        height: 27px !important;
+
+        min-height: 27px !important;
+
+        padding: 3px 7px !important;
+
+        font-size: 10px !important;
+    }
 }
 
 
+/* ====================================================================
+   15. FINAL CONTROL POSITION LOCK
+   ====================================================================
+   
+   KEEP THIS SECTION AT THE VERY END.
+   
+   These rules make sure the main controls cannot be moved by:
+   - generic button CSS
+   - panel CSS
+   - OpenLayers default positioning
+   - mobile CSS
+   - other plugins
+   ==================================================================== */
+
+
+/* --------------------------------------------------------------------
+   NORTH
+   -------------------------------------------------------------------- */
+
+.stage15-north-symbol {
+
+    position: fixed !important;
+
+    top: var(--edge) !important;
+    right: var(--edge) !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    width: 56px !important;
+    height: 56px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* --------------------------------------------------------------------
+   LAYER SWITCHER
+   -------------------------------------------------------------------- */
+
+.layer-switcher {
+
+    position: fixed !important;
+
+    top:
+        calc(
+            var(--edge) +
+            56px +
+            10px
+        ) !important;
+
+    right: var(--edge) !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    width: 48px !important;
+    height: 48px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+.layer-switcher-header {
+
+    position: relative !important;
+
+    top: 0 !important;
+    left: 0 !important;
+
+    width: 48px !important;
+    height: 48px !important;
+
+    min-width: 48px !important;
+    min-height: 48px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform-origin: center center !important;
+}
+
+
+/* --------------------------------------------------------------------
+   ZOOM
+   -------------------------------------------------------------------- */
+
+.ol-zoom {
+
+    position: fixed !important;
+
+    top: var(--zoom-top) !important;
+    left: var(--edge) !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+.ol-zoom button {
+
+    position: relative !important;
+
+    top: 0 !important;
+    left: 0 !important;
+
+    width: 40px !important;
+    min-width: 40px !important;
+
+    height: 40px !important;
+    min-height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+/* --------------------------------------------------------------------
+   MEASURE
+   -------------------------------------------------------------------- */
+
+#stage14-control {
+
+    position: fixed !important;
+
+    top: 132px !important;
+    left: var(--edge) !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 40px !important;
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+#stage14-measure-button {
+
+    position: relative !important;
+
+    top: 0 !important;
+    left: 0 !important;
+
+    width: 40px !important;
+    min-width: 40px !important;
+
+    height: 40px !important;
+    min-height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+/* --------------------------------------------------------------------
+   LOCATION
+   -------------------------------------------------------------------- */
+
+.ol-control.geolocate {
+
+    position: fixed !important;
+
+    top: 184px !important;
+    left: var(--edge) !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 40px !important;
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+.geolocate-button {
+
+    position: relative !important;
+
+    top: 0 !important;
+    left: 0 !important;
+
+    width: 40px !important;
+    min-width: 40px !important;
+
+    height: 40px !important;
+    min-height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+/* --------------------------------------------------------------------
+   STYLE EDITOR
+   -------------------------------------------------------------------- */
+
+.dynamic-style-control {
+
+    position: fixed !important;
+
+    top: 236px !important;
+    left: var(--edge) !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 40px !important;
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+.dynamic-style-control > button {
+
+    position: relative !important;
+
+    top: 0 !important;
+    left: 0 !important;
+
+    width: 40px !important;
+    min-width: 40px !important;
+
+    height: 40px !important;
+    min-height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+/* Direct Style button */
+#dynamic-style-open-button {
+
+    position: fixed !important;
+
+    top: 236px !important;
+    left: var(--edge) !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 40px !important;
+    min-width: 40px !important;
+
+    height: 40px !important;
+    min-height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+/* --------------------------------------------------------------------
+   SEARCH
+   -------------------------------------------------------------------- */
+
+#stage6-search-button,
+#btn-search {
+
+    position: fixed !important;
+
+    top: 288px !important;
+    left: var(--edge) !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 40px !important;
+    min-width: 40px !important;
+
+    height: 40px !important;
+    min-height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+/* ====================================================================
+   FINAL MOBILE POSITION LOCK
+   ==================================================================== */
+
+@media (max-width: 600px) {
+
+    .stage15-north-symbol {
+
+        position: fixed !important;
+
+        top: 12px !important;
+        right: 12px !important;
+
+        width: 48px !important;
+        height: 48px !important;
+
+        left: auto !important;
+        bottom: auto !important;
+    }
+
+
+    .layer-switcher {
+
+        position: fixed !important;
+
+        top: 70px !important;
+        right: 12px !important;
+
+        width: 46px !important;
+        height: 46px !important;
+
+        left: auto !important;
+        bottom: auto !important;
+    }
+
+
+    .layer-switcher-header {
+
+        width: 46px !important;
+        min-width: 46px !important;
+
+        height: 46px !important;
+        min-height: 46px !important;
+    }
+
+
+    .ol-zoom {
+
+        position: fixed !important;
+
+        top: 12px !important;
+        left: 12px !important;
+
+        width: 40px !important;
+
+        right: auto !important;
+        bottom: auto !important;
+    }
+
+
+    .ol-zoom button {
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    #stage14-control {
+
+        position: fixed !important;
+
+        top: 132px !important;
+        left: 12px !important;
+
+        width: 40px !important;
+        height: 40px !important;
+
+        right: auto !important;
+        bottom: auto !important;
+    }
+
+
+    #stage14-measure-button {
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    .ol-control.geolocate {
+
+        position: fixed !important;
+
+        top: 184px !important;
+        left: 12px !important;
+
+        width: 40px !important;
+        height: 40px !important;
+
+        right: auto !important;
+        bottom: auto !important;
+    }
+
+
+    .geolocate-button {
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    .dynamic-style-control {
+
+        position: fixed !important;
+
+        top: 236px !important;
+        left: 12px !important;
+
+        width: 40px !important;
+        height: 40px !important;
+
+        right: auto !important;
+        bottom: auto !important;
+    }
+
+
+    .dynamic-style-control > button {
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    #dynamic-style-open-button {
+
+        position: fixed !important;
+
+        top: 236px !important;
+        left: 12px !important;
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        right: auto !important;
+        bottom: auto !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    #stage6-search-button,
+    #btn-search {
+
+        position: fixed !important;
+
+        top: 288px !important;
+        left: 12px !important;
+
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+
+        right: auto !important;
+        bottom: auto !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}
+
+
+/* ====================================================================
+   CONTROL POSITION SUMMARY
+   ====================================================================
+
+   DESKTOP / MOBILE
+
+   Zoom       = 12px
+   Measure    = 132px
+   Location   = 184px
+   Style      = 236px
+   Search     = 288px
+
+   All main controls = 40 x 40 px
+
+   North Arrow:
+       Desktop = 56 x 56
+       Mobile  = 48 x 48
+
+   Layer Switcher:
+       Desktop = 48 x 48
+       Mobile  = 46 x 46
+
+   ==================================================================== */
