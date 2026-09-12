@@ -6363,70 +6363,170 @@ if (
        GET LAYER NAME
        ============================================================ */
 
-    function getLayerName(layer) {
+  function getLayerName(layer) {
 
-        return (
-            layer.get("popuplayertitle") ||
-            layer.get("title") ||
-            layer.get("name") ||
-            layer.get("layerName") ||
-            layer.get("file") ||
-            "Unnamed Layer"
-        );
+    if (!layer) {
+        return null;
     }
 
+    var name =
+        layer.get("popuplayertitle") ||
+        layer.get("title") ||
+        layer.get("name") ||
+        layer.get("layerName") ||
+        layer.get("file");
+
+    /*
+     * If there is no actual layer name,
+     * don't return "Unnamed Layer".
+     */
+    if (
+        name === undefined ||
+        name === null ||
+        String(name).trim() === ""
+    ) {
+        return null;
+    }
+
+    name = String(name).trim();
+
+    /*
+     * Ignore generic/internal layer names.
+     */
+    var ignoredNames = [
+        "layer",
+        "layer 1",
+        "layer 2",
+        "layer 3",
+        "layer 4",
+        "layer 5",
+        "unnamed layer",
+        "vector layer",
+        "vector"
+    ];
+
+    if (
+        ignoredNames.indexOf(
+            name.toLowerCase()
+        ) !== -1
+    ) {
+        return null;
+    }
+
+    return name;
+}
 
     /* ============================================================
        GET SEARCHABLE VECTOR LAYERS
        ============================================================ */
 
-    function getSearchableLayers() {
+   function getSearchableLayers() {
 
-        var layers = [];
+    var layers = [];
 
+    map.getLayers().forEach(function (layer) {
 
-        map.getLayers().forEach(
-            function (layer) {
+        /*
+         * Don't search the Stage 6 highlight layer.
+         */
+        if (
+            layer === stage6HighlightLayer
+        ) {
+            return;
+        }
 
-                if (
-                    layer ===
-                    stage6HighlightLayer
-                ) {
+        /*
+         * Only OpenLayers Vector layers.
+         */
+        if (
+            !(layer instanceof ol.layer.Vector)
+        ) {
+            return;
+        }
 
-                    return;
-                }
+        var source =
+            layer.getSource();
 
+        /*
+         * Source must contain features.
+         */
+        if (
+            !source ||
+            typeof source.getFeatures !== "function"
+        ) {
+            return;
+        }
 
-                if (
-                    !(layer instanceof
-                        ol.layer.Vector)
-                ) {
+        /*
+         * Get actual layer name.
+         */
+        var layerName =
+            getLayerName(layer);
 
-                    return;
-                }
+        /*
+         * If the layer doesn't have a
+         * meaningful name, ignore it.
+         */
+        if (!layerName) {
+            return;
+        }
 
+        /*
+         * Ignore known internal/helper layers.
+         */
+        var excludedNames = [
+            "featureOverlay",
+            "measureLayer",
+            "geolocateOverlay",
+            "stage14MeasureLayer",
+            "stage14SnapLayer",
+            "highlight",
+            "selection",
+            "select",
+            "measure",
+            "geolocate"
+        ];
 
-                var source =
-                    layer.getSource();
+        var lowerName =
+            layerName.toLowerCase();
 
+        var isExcluded =
+            excludedNames.some(function (excluded) {
 
-                if (
-                    !source ||
-                    !source.getFeatures
-                ) {
+                return (
+                    lowerName.indexOf(
+                        excluded.toLowerCase()
+                    ) !== -1
+                );
 
-                    return;
-                }
+            });
 
+        if (isExcluded) {
+            return;
+        }
 
-                layers.push(layer);
+        /*
+         * Ignore empty vector layers.
+         */
+        var features =
+            source.getFeatures();
 
-            }
-        );
+        if (
+            !features ||
+            features.length === 0
+        ) {
+            return;
+        }
 
+        /*
+         * This is a genuine searchable layer.
+         */
+        layers.push(layer);
 
-        return layers;
-    }
+    });
+
+    return layers;
+}
 
 
     /* ============================================================
@@ -7747,6 +7847,8 @@ if (
     );
 
 })();
+
+
 
 
 
