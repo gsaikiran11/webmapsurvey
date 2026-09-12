@@ -478,7 +478,7 @@ function addOverlayToSwitcher(
         "checkbox";
 
     checkbox.checked =
-        layer.getVisible();
+        false;
 
 
     checkbox.onchange =
@@ -982,7 +982,7 @@ async function loadGeoJSON(
                     source,
 
                 visible:
-                    true
+                    false
 
             });
 
@@ -1658,38 +1658,187 @@ function getVectorLayers() {
         return layers;
     }
 
+    /*
+     * Keep track of layers already added.
+     * This prevents the same layer from appearing
+     * multiple times in the dropdown.
+     */
+    var seenLayers = [];
+
     map.getLayers().forEach(function(layer) {
 
         if (
-            layer instanceof ol.layer.Vector ||
-            layer instanceof ol.layer.VectorImage
+            !(
+                layer instanceof ol.layer.Vector ||
+                layer instanceof ol.layer.VectorImage
+            )
+        ) {
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // Ignore internal QGIS2Web/helper layers
+        // ----------------------------------------------------
+
+        var excluded = [
+            "featureOverlay",
+            "measureLayer",
+            "geolocateOverlay",
+            "stage14MeasureLayer",
+            "stage14SnapLayer"
+        ];
+
+
+        var title =
+            layer.get("title") ||
+            layer.get("name") ||
+            layer.get("layerName") ||
+            layer.get("popuplayertitle") ||
+            "";
+
+
+        if (
+            excluded.indexOf(title) !== -1
+        ) {
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // Must have a source
+        // ----------------------------------------------------
+
+        var source =
+            layer.getSource();
+
+        if (!source) {
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // Must contain features
+        // ----------------------------------------------------
+
+        if (
+            typeof source.getFeatures !==
+            "function"
+        ) {
+            return;
+        }
+
+
+        var features =
+            source.getFeatures();
+
+        if (
+            !features ||
+            features.length === 0
+        ) {
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // Get layer name
+        // ----------------------------------------------------
+
+        var layerName =
+            getLayerName(layer);
+
+
+        if (
+            !layerName ||
+            layerName === "Layer"
+        ) {
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // Prevent duplicate layers
+        // ----------------------------------------------------
+
+        var duplicate =
+            false;
+
+
+        for (
+            var i = 0;
+            i < seenLayers.length;
+            i++
         ) {
 
-            // Ignore internal QGIS2Web/helper layers
-            var excluded = [
-                "featureOverlay",
-                "measureLayer",
-                "geolocateOverlay",
-                "stage14MeasureLayer",
-                "stage14SnapLayer"
-            ];
+            var existing =
+                seenLayers[i];
 
-            var title =
-                layer.get("title") ||
-                layer.get("name") ||
-                layer.get("layerName") ||
-                "";
 
-            if (excluded.indexOf(title) !== -1) {
-                return;
+            /*
+             * First compare the actual layer object.
+             */
+
+            if (
+                existing.layer === layer
+            ) {
+
+                duplicate = true;
+
+                break;
             }
 
-            if (layer.getSource()) {
-                layers.push(layer);
+
+            /*
+             * Then compare layer name + source.
+             *
+             * This catches QGIS2Web duplicate
+             * layer references.
+             */
+
+            var existingSource =
+                existing.layer.getSource();
+
+
+            var sameSource =
+                existingSource === source;
+
+
+            var sameName =
+                getLayerName(
+                    existing.layer
+                ) === layerName;
+
+
+            if (
+                sameSource &&
+                sameName
+            ) {
+
+                duplicate = true;
+
+                break;
             }
         }
 
+
+        if (duplicate) {
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // Add layer
+        // ----------------------------------------------------
+
+        seenLayers.push({
+            layer: layer
+        });
+
+
+        layers.push(layer);
+
     });
+
 
     return layers;
 }
