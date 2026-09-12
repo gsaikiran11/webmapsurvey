@@ -1531,9 +1531,12 @@ console.log(
 
 
 
+
 // ============================================================
 // 🎨 DYNAMIC LAYER STYLE EDITOR
 // ============================================================
+// Persistent version for GitHub Pages / Mobile Browser
+//
 // Features:
 // ✔ Automatically detects vector layers
 // ✔ Layer name detection
@@ -1551,19 +1554,96 @@ console.log(
 // ✔ Label color
 // ✔ Label size
 // ✔ Label rotation
-// ✔ Apply
-// ✔ Reset
+// ✔ APPLY + SAVE
+// ✔ Automatic restore after page reload
+// ✔ Persistent localStorage
+// ✔ Per-layer saved styles
+// ✔ Reset saved style
 // ✔ Mobile friendly
-// ✔ Panel appears ABOVE coordinate display
 // ============================================================
 
 (function () {
 
     // ========================================================
+    // 💾 LOCAL STORAGE
+    // ========================================================
+
+    // Change this if you ever want a completely new storage
+    // space for another version of your WebGIS.
+    var STORAGE_KEY = 'myWebGIS_DynamicLayerStyles_v1';
+
+    // --------------------------------------------------------
+    // GET ALL SAVED STYLES
+    // --------------------------------------------------------
+    function getSavedStyles() {
+
+        try {
+
+            var saved =
+                localStorage.getItem(STORAGE_KEY);
+
+            if (!saved) {
+                return {};
+            }
+
+            return JSON.parse(saved) || {};
+
+        } catch (e) {
+
+            console.warn(
+                'Unable to read saved styles:',
+                e
+            );
+
+            return {};
+        }
+    }
+
+    // --------------------------------------------------------
+    // SAVE ALL STYLES
+    // --------------------------------------------------------
+    function saveAllStyles(styles) {
+
+        try {
+
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(styles)
+            );
+
+        } catch (e) {
+
+            console.warn(
+                'Unable to save styles:',
+                e
+            );
+        }
+    }
+
+    // --------------------------------------------------------
+    // GET SAVED STYLE FOR A PARTICULAR LAYER
+    // --------------------------------------------------------
+    function getSavedStyle(layer) {
+
+        if (!layer) {
+            return null;
+        }
+
+        var layerName =
+            getLayerName(layer);
+
+        var styles =
+            getSavedStyles();
+
+        return styles[layerName] || null;
+    }
+
+    // ========================================================
     // CREATE OPENLAYERS CONTROL CONTAINER
     // ========================================================
 
-    var styleElement = document.createElement('div');
+    var styleElement =
+        document.createElement('div');
 
     styleElement.className =
         'ol-unselectable ol-control dynamic-style-control';
@@ -1573,22 +1653,28 @@ console.log(
     // STYLE BUTTON
     // ========================================================
 
-    var styleButton = document.createElement('button');
+    var styleButton =
+        document.createElement('button');
 
     styleButton.type = 'button';
     styleButton.innerHTML = '🎨';
-    styleButton.title = 'Layer Style Editor';
+    styleButton.title =
+        'Layer Style Editor';
 
-    styleElement.appendChild(styleButton);
+    styleElement.appendChild(
+        styleButton
+    );
 
 
     // ========================================================
     // CREATE STYLE PANEL
     // ========================================================
 
-    var stylePanel = document.createElement('div');
+    var stylePanel =
+        document.createElement('div');
 
-    stylePanel.className = 'dynamic-style-panel';
+    stylePanel.className =
+        'dynamic-style-panel';
 
 
     // ========================================================
@@ -1599,7 +1685,9 @@ console.log(
 
         <div class="dynamic-style-title">
 
-            <span>🎨 Layer Style Editor</span>
+            <span>
+                🎨 Layer Style Editor
+            </span>
 
             <button
                 type="button"
@@ -1615,7 +1703,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Layer</label>
+            <label>
+                Layer
+            </label>
 
             <select id="ds-layer"></select>
 
@@ -1626,7 +1716,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Style Type</label>
+            <label>
+                Style Type
+            </label>
 
             <select id="ds-style-type">
 
@@ -1650,7 +1742,9 @@ console.log(
             id="ds-category-field-row"
             style="display:none;">
 
-            <label>Category Field</label>
+            <label>
+                Category Field
+            </label>
 
             <select id="ds-category-field"></select>
 
@@ -1687,7 +1781,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Fill Color</label>
+            <label>
+                Fill Color
+            </label>
 
             <input
                 type="color"
@@ -1699,7 +1795,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Fill Opacity</label>
+            <label>
+                Fill Opacity
+            </label>
 
             <input
                 type="range"
@@ -1728,7 +1826,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Border Color</label>
+            <label>
+                Border Color
+            </label>
 
             <input
                 type="color"
@@ -1740,7 +1840,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Border Width</label>
+            <label>
+                Border Width
+            </label>
 
             <input
                 type="number"
@@ -1765,7 +1867,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Enable Labels</label>
+            <label>
+                Enable Labels
+            </label>
 
             <input
                 type="checkbox"
@@ -1778,7 +1882,9 @@ console.log(
             class="dynamic-style-row"
             id="ds-label-field-row">
 
-            <label>Label Field</label>
+            <label>
+                Label Field
+            </label>
 
             <select id="ds-label-field"></select>
 
@@ -1787,7 +1893,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Label Color</label>
+            <label>
+                Label Color
+            </label>
 
             <input
                 type="color"
@@ -1799,7 +1907,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Label Size</label>
+            <label>
+                Label Size
+            </label>
 
             <input
                 type="number"
@@ -1814,7 +1924,9 @@ console.log(
 
         <div class="dynamic-style-row">
 
-            <label>Label Rotation</label>
+            <label>
+                Label Rotation
+            </label>
 
             <input
                 type="number"
@@ -1834,13 +1946,13 @@ console.log(
             <button
                 type="button"
                 id="ds-apply">
-                Apply
+                💾 Apply & Save
             </button>
 
             <button
                 type="button"
                 id="ds-reset">
-                Reset
+                ↩ Reset
             </button>
 
         </div>
@@ -1849,21 +1961,20 @@ console.log(
 
 
     // ========================================================
-    // IMPORTANT:
-    // PANEL IS ADDED DIRECTLY TO BODY
-    // ========================================================
-    // This prevents the panel from being trapped inside
-    // the OpenLayers control stacking context.
+    // PANEL ADDED DIRECTLY TO BODY
     // ========================================================
 
-    document.body.appendChild(stylePanel);
+    document.body.appendChild(
+        stylePanel
+    );
 
 
     // ========================================================
     // PANEL CSS
     // ========================================================
 
-    var styleCSS = document.createElement('style');
+    var styleCSS =
+        document.createElement('style');
 
     styleCSS.innerHTML = `
 
@@ -1876,12 +1987,14 @@ console.log(
             position: relative !important;
 
             z-index: 18000 !important;
+
         }
 
 
         .dynamic-style-control > button {
 
             width: 35px !important;
+
             height: 35px !important;
 
             font-size: 18px !important;
@@ -1932,14 +2045,6 @@ console.log(
             box-shadow:
                 0 3px 15px
                 rgba(0,0,0,0.35) !important;
-
-            /*
-             * VERY HIGH Z-INDEX
-             *
-             * Panel is now a direct child of BODY,
-             * so this can actually place it above
-             * the coordinate display.
-             */
 
             z-index: 999999 !important;
 
@@ -2227,6 +2332,8 @@ console.log(
 
             background: #f5f5f5 !important;
 
+            font-size: 13px !important;
+
         }
 
 
@@ -2304,7 +2411,7 @@ console.log(
 
             .dynamic-style-buttons button {
 
-                min-height: 38px !important;
+                min-height: 42px !important;
 
             }
 
@@ -2312,7 +2419,9 @@ console.log(
 
     `;
 
-    document.head.appendChild(styleCSS);
+    document.head.appendChild(
+        styleCSS
+    );
 
 
     // ========================================================
@@ -2321,10 +2430,14 @@ console.log(
 
     var styleControl =
         new ol.control.Control({
+
             element: styleElement
+
         });
 
-    map.addControl(styleControl);
+    map.addControl(
+        styleControl
+    );
 
 
     // ========================================================
@@ -2332,13 +2445,19 @@ console.log(
     // ========================================================
 
     var layerSelect =
-        document.getElementById('ds-layer');
+        document.getElementById(
+            'ds-layer'
+        );
 
     var styleTypeSelect =
-        document.getElementById('ds-style-type');
+        document.getElementById(
+            'ds-style-type'
+        );
 
     var categoryFieldSelect =
-        document.getElementById('ds-category-field');
+        document.getElementById(
+            'ds-category-field'
+        );
 
     var categoryFieldRow =
         document.getElementById(
@@ -2435,85 +2554,102 @@ console.log(
                 return;
             }
 
-            collection.forEach(function (layer) {
+            collection.forEach(
+                function (layer) {
 
-                if (
-                    layer instanceof ol.layer.Group
-                ) {
+                    if (
+                        layer instanceof
+                        ol.layer.Group
+                    ) {
 
-                    scan(layer.getLayers());
+                        scan(
+                            layer.getLayers()
+                        );
 
-                    return;
+                        return;
+                    }
+
+
+                    if (
+                        !(layer instanceof
+                        ol.layer.Vector)
+                    ) {
+
+                        return;
+                    }
+
+
+                    if (
+                        layer ===
+                        window.featureOverlay
+                    ) {
+
+                        return;
+                    }
+
+
+                    if (
+                        layer ===
+                        window.measureLayer
+                    ) {
+
+                        return;
+                    }
+
+
+                    if (
+                        layer ===
+                        window.geolocateOverlay
+                    ) {
+
+                        return;
+                    }
+
+
+                    if (
+                        layer ===
+                        window.stage14MeasureLayer
+                    ) {
+
+                        return;
+                    }
+
+
+                    if (
+                        layer ===
+                        window.stage14SnapLayer
+                    ) {
+
+                        return;
+                    }
+
+
+                    var source =
+                        layer.getSource();
+
+
+                    if (
+                        !source ||
+                        !(source instanceof
+                        ol.source.Vector)
+                    ) {
+
+                        return;
+                    }
+
+
+                    layers.push(layer);
+
                 }
-
-
-                if (
-                    !(layer instanceof ol.layer.Vector)
-                ) {
-                    return;
-                }
-
-
-                if (
-                    layer === window.featureOverlay
-                ) {
-                    return;
-                }
-
-
-                if (
-                    layer === window.measureLayer
-                ) {
-                    return;
-                }
-
-
-                if (
-                    layer === window.geolocateOverlay
-                ) {
-                    return;
-                }
-
-
-                if (
-                    layer ===
-                    window.stage14MeasureLayer
-                ) {
-                    return;
-                }
-
-
-                if (
-                    layer ===
-                    window.stage14SnapLayer
-                ) {
-                    return;
-                }
-
-
-                var source =
-                    layer.getSource();
-
-
-                if (
-                    !source ||
-                    !(source instanceof ol.source.Vector)
-                ) {
-                    return;
-                }
-
-
-                layers.push(layer);
-
-            });
-
+            );
         }
 
 
-        scan(map.getLayers());
+        scan(
+            map.getLayers()
+        );
 
         return layers;
-
     }
 
 
@@ -2524,24 +2660,36 @@ console.log(
     function getLayerName(layer) {
 
         var name =
-            layer.get('popuplayertitle') ||
-            layer.get('title') ||
-            layer.get('name') ||
-            layer.get('layerName');
+            layer.get(
+                'popuplayertitle'
+            ) ||
+
+            layer.get(
+                'title'
+            ) ||
+
+            layer.get(
+                'name'
+            ) ||
+
+            layer.get(
+                'layerName'
+            );
 
 
         if (!name) {
 
             name =
                 'Layer ' +
-                (getVectorLayers()
-                    .indexOf(layer) + 1);
 
+                (
+                    getVectorLayers()
+                        .indexOf(layer) + 1
+                );
         }
 
 
-        return name;
-
+        return String(name);
     }
 
 
@@ -2566,39 +2714,51 @@ console.log(
             source.getFeatures();
 
 
-        features.forEach(function (feature) {
+        features.forEach(
+            function (feature) {
 
-            var properties =
-                feature.getProperties();
-
-
-            Object.keys(properties)
-                .forEach(function (key) {
-
-                    if (
-                        key === 'geometry' ||
-                        key === 'layerObject' ||
-                        key === 'idO'
-                    ) {
-                        return;
-                    }
+                var properties =
+                    feature.getProperties();
 
 
-                    if (
-                        fields.indexOf(key) === -1
-                    ) {
+                Object.keys(properties)
+                    .forEach(
+                        function (key) {
 
-                        fields.push(key);
+                            if (
+                                key ===
+                                'geometry' ||
 
-                    }
+                                key ===
+                                'layerObject' ||
 
-                });
+                                key ===
+                                'idO'
+                            ) {
 
-        });
+                                return;
+                            }
+
+
+                            if (
+                                fields.indexOf(
+                                    key
+                                ) === -1
+                            ) {
+
+                                fields.push(
+                                    key
+                                );
+                            }
+
+                        }
+                    );
+
+            }
+        );
 
 
         return fields;
-
     }
 
 
@@ -2624,53 +2784,62 @@ console.log(
 
         source
             .getFeatures()
-            .forEach(function (feature) {
+            .forEach(
+                function (feature) {
 
-                var value =
-                    feature.get(field);
-
-
-                if (
-                    value === null ||
-                    value === undefined ||
-                    value === ''
-                ) {
-
-                    value = '(blank)';
-
-                }
+                    var value =
+                        feature.get(
+                            field
+                        );
 
 
-                value = String(value);
+                    if (
+                        value === null ||
+                        value === undefined ||
+                        value === ''
+                    ) {
+
+                        value =
+                            '(blank)';
+                    }
 
 
-                if (
-                    values.indexOf(value) === -1
-                ) {
-
-                    values.push(value);
-
-                }
-
-            });
+                    value =
+                        String(value);
 
 
-        values.sort(function (a, b) {
+                    if (
+                        values.indexOf(
+                            value
+                        ) === -1
+                    ) {
 
-            return a.localeCompare(
-                b,
-                undefined,
-                {
-                    numeric: true,
-                    sensitivity: 'base'
+                        values.push(
+                            value
+                        );
+                    }
+
                 }
             );
 
-        });
+
+        values.sort(
+            function (a, b) {
+
+                return a.localeCompare(
+                    b,
+                    undefined,
+                    {
+                        numeric: true,
+                        sensitivity: 'base'
+                    }
+                );
+
+            }
+        );
 
 
         return values;
-
     }
 
 
@@ -2718,44 +2887,60 @@ console.log(
             layerSelect.value;
 
 
-        layerSelect.innerHTML = '';
+        layerSelect.innerHTML =
+            '';
 
 
-        layers.forEach(function (layer, index) {
+        layers.forEach(
+            function (layer, index) {
 
-            var option =
-                document.createElement('option');
-
-
-            option.value = index;
-
-            option.textContent =
-                getLayerName(layer);
+                var option =
+                    document.createElement(
+                        'option'
+                    );
 
 
-            layerSelect.appendChild(option);
+                option.value =
+                    index;
 
-        });
+
+                option.textContent =
+                    getLayerName(layer);
+
+
+                layerSelect.appendChild(
+                    option
+                );
+
+            }
+        );
 
 
         if (
             current !== '' &&
-            current < layers.length
+            parseInt(current) <
+            layers.length
         ) {
 
-            layerSelect.value = current;
+            layerSelect.value =
+                current;
 
         }
 
 
         if (layers.length > 0) {
 
-            loadLayer(
-                layers[layerSelect.value || 0]
-            );
+            var layer =
+                layers[
+                    parseInt(
+                        layerSelect.value || 0
+                    )
+                ];
+
+
+            loadLayer(layer);
 
         }
-
     }
 
 
@@ -2770,7 +2955,9 @@ console.log(
 
 
         var index =
-            parseInt(layerSelect.value);
+            parseInt(
+                layerSelect.value
+            );
 
 
         var layer =
@@ -2786,35 +2973,51 @@ console.log(
             getLayerFields(layer);
 
 
-        categoryFieldSelect.innerHTML = '';
+        categoryFieldSelect.innerHTML =
+            '';
 
-        labelField.innerHTML = '';
-
-
-        fields.forEach(function (field) {
-
-            var option1 =
-                document.createElement('option');
-
-            option1.value = field;
-
-            option1.textContent = field;
-
-            categoryFieldSelect
-                .appendChild(option1);
+        labelField.innerHTML =
+            '';
 
 
-            var option2 =
-                document.createElement('option');
+        fields.forEach(
+            function (field) {
 
-            option2.value = field;
+                var option1 =
+                    document.createElement(
+                        'option'
+                    );
 
-            option2.textContent = field;
+                option1.value =
+                    field;
 
-            labelField
-                .appendChild(option2);
+                option1.textContent =
+                    field;
 
-        });
+                categoryFieldSelect
+                    .appendChild(
+                        option1
+                    );
+
+
+                var option2 =
+                    document.createElement(
+                        'option'
+                    );
+
+                option2.value =
+                    field;
+
+                option2.textContent =
+                    field;
+
+                labelField
+                    .appendChild(
+                        option2
+                    );
+
+            }
+        );
 
 
         // ----------------------------------------------------
@@ -2843,12 +3046,15 @@ console.log(
         ) {
 
             var found =
-                fields.find(function (field) {
+                fields.find(
+                    function (field) {
 
-                    return field.toLowerCase() ===
-                        preferred[i];
+                        return field
+                            .toLowerCase() ===
+                            preferred[i];
 
-                });
+                    }
+                );
 
 
             if (found) {
@@ -2857,14 +3063,11 @@ console.log(
                     found;
 
                 break;
-
             }
-
         }
 
 
         populateCategoryValues();
-
     }
 
 
@@ -2874,7 +3077,8 @@ console.log(
 
     function populateCategoryValues() {
 
-        categoryValues.innerHTML = '';
+        categoryValues.innerHTML =
+            '';
 
 
         var layers =
@@ -2883,7 +3087,9 @@ console.log(
 
         var layer =
             layers[
-                parseInt(layerSelect.value)
+                parseInt(
+                    layerSelect.value
+                )
             ];
 
 
@@ -2908,51 +3114,74 @@ console.log(
             );
 
 
-        values.forEach(function (
-            value,
-            index
-        ) {
+        values.forEach(
+            function (
+                value,
+                index
+            ) {
 
-            var row =
-                document.createElement('div');
-
-            row.className =
-                'dynamic-category-row';
-
-
-            var name =
-                document.createElement('span');
-
-            name.className =
-                'dynamic-category-name';
-
-            name.textContent =
-                value;
+                var row =
+                    document.createElement(
+                        'div'
+                    );
 
 
-            var color =
-                document.createElement('input');
-
-            color.type = 'color';
-
-            color.className =
-                'dynamic-category-color';
-
-            color.value =
-                categoryColors[
-                    index %
-                    categoryColors.length
-                ];
+                row.className =
+                    'dynamic-category-row';
 
 
-            row.appendChild(name);
+                var name =
+                    document.createElement(
+                        'span'
+                    );
 
-            row.appendChild(color);
 
-            categoryValues.appendChild(row);
+                name.className =
+                    'dynamic-category-name';
 
-        });
 
+                name.textContent =
+                    value;
+
+
+                var color =
+                    document.createElement(
+                        'input'
+                    );
+
+
+                color.type =
+                    'color';
+
+
+                color.className =
+                    'dynamic-category-color';
+
+
+                color.value =
+                    categoryColors[
+                        index %
+                        categoryColors.length
+                    ];
+
+
+                row.appendChild(
+                    name
+                );
+
+
+                row.appendChild(
+                    color
+                );
+
+
+                categoryValues
+                    .appendChild(
+                        row
+                    );
+
+            }
+        );
     }
 
 
@@ -2967,7 +3196,8 @@ console.log(
 
 
         if (
-            typeof style === 'function'
+            typeof style ===
+            'function'
         ) {
 
             try {
@@ -2984,15 +3214,12 @@ console.log(
                             feature,
                             1
                         );
-
                 }
 
             } catch (e) {
 
                 style = null;
-
             }
-
         }
 
 
@@ -3000,13 +3227,12 @@ console.log(
             Array.isArray(style)
         ) {
 
-            style = style[0];
-
+            style =
+                style[0];
         }
 
 
         return style;
-
     }
 
 
@@ -3022,22 +3248,29 @@ console.log(
 
 
         if (
-            typeof color !== 'string'
+            typeof color !==
+            'string'
         ) {
 
             return '#3388ff';
-
         }
 
 
         if (
-            color.charAt(0) === '#'
+            color.charAt(0) ===
+            '#'
         ) {
 
-            return color.substring(
-                0,
-                7
-            );
+            if (
+                color.length >= 7
+            ) {
+
+                return color.substring(
+                    0,
+                    7
+                );
+
+            }
 
         }
 
@@ -3062,15 +3295,16 @@ console.log(
 
 
             return '#' +
-                hex(match[1]) +
-                hex(match[2]) +
-                hex(match[3]);
 
+                hex(match[1]) +
+
+                hex(match[2]) +
+
+                hex(match[3]);
         }
 
 
         return '#3388ff';
-
     }
 
 
@@ -3085,13 +3319,23 @@ console.log(
         }
 
 
+        if (
+            typeof color !==
+            'string'
+        ) {
+
+            return 1;
+        }
+
+
         var match =
             color.match(
-                /rgba?\(([^)]+)\)/
+                /rgba?\(\s*([^)]+)\)/
             );
 
 
         if (!match) {
+
             return 1;
         }
 
@@ -3100,28 +3344,31 @@ console.log(
             match[1].split(',');
 
 
-        if (parts.length >= 4) {
+        if (
+            parts.length >= 4
+        ) {
 
             var opacity =
-                parseFloat(parts[3]);
+                parseFloat(
+                    parts[3]
+                );
 
 
-            if (!isNaN(opacity)) {
+            if (
+                !isNaN(opacity)
+            ) {
 
                 return opacity;
-
             }
-
         }
 
 
         return 1;
-
     }
 
 
     // ========================================================
-    // LOAD LAYER
+    // LOAD ORIGINAL / CURRENT STYLE INTO PANEL
     // ========================================================
 
     function loadLayer(layer) {
@@ -3134,11 +3381,39 @@ console.log(
         populateFields();
 
 
+        // ----------------------------------------------------
+        // FIRST: CHECK SAVED STYLE
+        // ----------------------------------------------------
+
+        var saved =
+            getSavedStyle(layer);
+
+
+        if (saved) {
+
+            applySavedStyleToControls(
+                saved
+            );
+
+            updateLabelVisibility();
+
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // NO SAVED STYLE
+        // LOAD CURRENT OPENLAYERS STYLE
+        // ----------------------------------------------------
+
         var style =
             getCurrentStyle(layer);
 
 
         if (!style) {
+
+            updateLabelVisibility();
+
             return;
         }
 
@@ -3181,7 +3456,6 @@ console.log(
                     ) + '%';
 
             }
-
         }
 
 
@@ -3205,7 +3479,6 @@ console.log(
                     colorToHex(
                         strokeColorValue
                     );
-
             }
 
 
@@ -3217,7 +3490,6 @@ console.log(
                     stroke.getWidth();
 
             }
-
         }
 
 
@@ -3252,9 +3524,7 @@ console.log(
                         colorToHex(
                             textColor
                         );
-
                 }
-
             }
 
 
@@ -3264,9 +3534,9 @@ console.log(
 
                 labelSize.value =
                     Math.round(
-                        text.getScale() * 12
+                        text.getScale() *
+                        12
                     );
-
             }
 
 
@@ -3280,14 +3550,439 @@ console.log(
                         180 /
                         Math.PI
                     );
+            }
+        }
+
+
+        updateLabelVisibility();
+    }
+
+
+    // ========================================================
+    // CREATE STYLE SETTINGS OBJECT
+    // ========================================================
+
+    function getStyleSettings() {
+
+        var settings = {
+
+            styleType:
+                styleTypeSelect.value,
+
+            fillColor:
+                fillColor.value,
+
+            fillOpacity:
+                parseFloat(
+                    fillOpacity.value
+                ),
+
+            strokeColor:
+                strokeColor.value,
+
+            strokeWidth:
+                parseFloat(
+                    strokeWidth.value
+                ),
+
+            labelEnabled:
+                labelEnabled.checked,
+
+            labelField:
+                labelField.value,
+
+            labelColor:
+                labelColor.value,
+
+            labelSize:
+                parseFloat(
+                    labelSize.value
+                ),
+
+            labelRotation:
+                parseFloat(
+                    labelRotation.value
+                ),
+
+            categoryField:
+                categoryFieldSelect.value,
+
+            categories: {}
+
+        };
+
+
+        // ----------------------------------------------------
+        // CATEGORY COLORS
+        // ----------------------------------------------------
+
+        categoryValues
+            .querySelectorAll(
+                '.dynamic-category-row'
+            )
+            .forEach(
+                function (row) {
+
+                    var name =
+                        row.querySelector(
+                            '.dynamic-category-name'
+                        ).textContent;
+
+
+                    var color =
+                        row.querySelector(
+                            '.dynamic-category-color'
+                        ).value;
+
+
+                    settings.categories[
+                        name
+                    ] = color;
+
+                }
+            );
+
+
+        return settings;
+    }
+
+
+    // ========================================================
+    // SAVE CURRENT STYLE
+    // ========================================================
+
+    function saveCurrentStyle(
+        layer
+    ) {
+
+        if (!layer) {
+            return;
+        }
+
+
+        var styles =
+            getSavedStyles();
+
+
+        var layerName =
+            getLayerName(layer);
+
+
+        styles[layerName] =
+            getStyleSettings();
+
+
+        saveAllStyles(
+            styles
+        );
+
+
+        console.log(
+            'Style saved for layer:',
+            layerName
+        );
+    }
+
+
+    // ========================================================
+    // APPLY SAVED SETTINGS TO PANEL
+    // ========================================================
+
+    function applySavedStyleToControls(
+        saved
+    ) {
+
+        if (!saved) {
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // STYLE TYPE
+        // ----------------------------------------------------
+
+        if (
+            saved.styleType
+        ) {
+
+            styleTypeSelect.value =
+                saved.styleType;
+        }
+
+
+        // ----------------------------------------------------
+        // FILL
+        // ----------------------------------------------------
+
+        if (
+            saved.fillColor
+        ) {
+
+            fillColor.value =
+                saved.fillColor;
+        }
+
+
+        if (
+            saved.fillOpacity !==
+            undefined
+        ) {
+
+            fillOpacity.value =
+                saved.fillOpacity;
+
+
+            opacityValue.textContent =
+                Math.round(
+                    saved.fillOpacity *
+                    100
+                ) + '%';
+
+        }
+
+
+        // ----------------------------------------------------
+        // BORDER
+        // ----------------------------------------------------
+
+        if (
+            saved.strokeColor
+        ) {
+
+            strokeColor.value =
+                saved.strokeColor;
+        }
+
+
+        if (
+            saved.strokeWidth !==
+            undefined
+        ) {
+
+            strokeWidth.value =
+                saved.strokeWidth;
+        }
+
+
+        // ----------------------------------------------------
+        // LABEL
+        // ----------------------------------------------------
+
+        if (
+            saved.labelEnabled !==
+            undefined
+        ) {
+
+            labelEnabled.checked =
+                saved.labelEnabled;
+        }
+
+
+        if (
+            saved.labelField
+        ) {
+
+            if (
+                Array.from(
+                    labelField.options
+                ).some(
+                    function (option) {
+
+                        return option.value ===
+                            saved.labelField;
+
+                    }
+                )
+            ) {
+
+                labelField.value =
+                    saved.labelField;
+            }
+        }
+
+
+        if (
+            saved.labelColor
+        ) {
+
+            labelColor.value =
+                saved.labelColor;
+        }
+
+
+        if (
+            saved.labelSize !==
+            undefined
+        ) {
+
+            labelSize.value =
+                saved.labelSize;
+        }
+
+
+        if (
+            saved.labelRotation !==
+            undefined
+        ) {
+
+            labelRotation.value =
+                saved.labelRotation;
+        }
+
+
+        // ----------------------------------------------------
+        // CATEGORY FIELD
+        // ----------------------------------------------------
+
+        if (
+            saved.categoryField
+        ) {
+
+            if (
+                Array.from(
+                    categoryFieldSelect.options
+                ).some(
+                    function (option) {
+
+                        return option.value ===
+                            saved.categoryField;
+
+                    }
+                )
+            ) {
+
+                categoryFieldSelect.value =
+                    saved.categoryField;
 
             }
+        }
+
+
+        // ----------------------------------------------------
+        // REBUILD CATEGORY COLORS
+        // ----------------------------------------------------
+
+        if (
+            saved.styleType ===
+            'categorized'
+        ) {
+
+            categoryFieldRow.style.display =
+                'flex';
+
+            categoryValuesRow.style.display =
+                'block';
+
+
+            populateCategoryValues();
+
+
+            if (
+                saved.categories
+            ) {
+
+                categoryValues
+                    .querySelectorAll(
+                        '.dynamic-category-row'
+                    )
+                    .forEach(
+                        function (row) {
+
+                            var name =
+                                row.querySelector(
+                                    '.dynamic-category-name'
+                                ).textContent;
+
+
+                            var colorInput =
+                                row.querySelector(
+                                    '.dynamic-category-color'
+                                );
+
+
+                            if (
+                                saved.categories[
+                                    name
+                                ]
+                            ) {
+
+                                colorInput.value =
+                                    saved.categories[
+                                        name
+                                    ];
+
+                            }
+
+                        }
+                    );
+            }
+
+        } else {
+
+            categoryFieldRow.style.display =
+                'none';
+
+            categoryValuesRow.style.display =
+                'none';
 
         }
 
 
         updateLabelVisibility();
+    }
 
+
+    // ========================================================
+    // APPLY SAVED STYLE TO LAYER
+    // ========================================================
+
+    function applySavedStyleToLayer(
+        layer,
+        saved
+    ) {
+
+        if (!layer || !saved) {
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // PUT SAVED VALUES INTO CONTROLS
+        // ----------------------------------------------------
+
+        applySavedStyleToControls(
+            saved
+        );
+
+
+        // ----------------------------------------------------
+        // APPLY TO OPENLAYERS
+        // ----------------------------------------------------
+
+        if (
+            saved.styleType ===
+            'categorized'
+        ) {
+
+            layer.setStyle(
+                createCategorizedStyle()
+            );
+
+        } else {
+
+            layer.setStyle(
+                createSingleStyle()
+            );
+        }
+
+
+        if (
+            map &&
+            map.renderSync
+        ) {
+
+            map.renderSync();
+        }
     }
 
 
@@ -3334,7 +4029,9 @@ console.log(
                 function (feature) {
 
                     var value =
-                        feature.get(field);
+                        feature.get(
+                            field
+                        );
 
 
                     if (
@@ -3343,18 +4040,16 @@ console.log(
                     ) {
 
                         return '';
-
                     }
 
 
                     return String(value);
-
                 };
-
         }
 
 
-        var textStyle = null;
+        var textStyle =
+            null;
 
 
         if (
@@ -3402,7 +4097,6 @@ console.log(
                         true
 
                 });
-
         }
 
 
@@ -3417,7 +4111,10 @@ console.log(
                             opacity * 255
                         )
                         .toString(16)
-                        .padStart(2, '0')
+                        .padStart(
+                            2,
+                            '0'
+                        )
 
                 }),
 
@@ -3436,7 +4133,6 @@ console.log(
                 textStyle
 
         });
-
     }
 
 
@@ -3457,24 +4153,27 @@ console.log(
             .querySelectorAll(
                 '.dynamic-category-row'
             )
-            .forEach(function (row) {
+            .forEach(
+                function (row) {
 
-                var name =
-                    row.querySelector(
-                        '.dynamic-category-name'
-                    ).textContent;
-
-
-                var color =
-                    row.querySelector(
-                        '.dynamic-category-color'
-                    ).value;
+                    var name =
+                        row.querySelector(
+                            '.dynamic-category-name'
+                        ).textContent;
 
 
-                categoryMap[name] =
-                    color;
+                    var color =
+                        row.querySelector(
+                            '.dynamic-category-color'
+                        ).value;
 
-            });
+
+                    categoryMap[
+                        name
+                    ] = color;
+
+                }
+            );
 
 
         var fillOpacityValue =
@@ -3496,7 +4195,9 @@ console.log(
         return function (feature) {
 
             var value =
-                feature.get(field);
+                feature.get(
+                    field
+                );
 
 
             if (
@@ -3505,8 +4206,8 @@ console.log(
                 value === ''
             ) {
 
-                value = '(blank)';
-
+                value =
+                    '(blank)';
             }
 
 
@@ -3522,7 +4223,6 @@ console.log(
 
                 color =
                     fillColor.value;
-
             }
 
 
@@ -3546,8 +4246,8 @@ console.log(
                     labelValue === undefined
                 ) {
 
-                    labelValue = '';
-
+                    labelValue =
+                        '';
                 }
 
 
@@ -3555,7 +4255,9 @@ console.log(
                     new ol.style.Text({
 
                         text:
-                            String(labelValue),
+                            String(
+                                labelValue
+                            ),
 
                         fill:
                             new ol.style.Fill({
@@ -3592,7 +4294,6 @@ console.log(
                             true
 
                     });
-
             }
 
 
@@ -3608,7 +4309,10 @@ console.log(
                                 255
                             )
                             .toString(16)
-                            .padStart(2, '0')
+                            .padStart(
+                                2,
+                                '0'
+                            )
 
                     }),
 
@@ -3629,12 +4333,11 @@ console.log(
             });
 
         };
-
     }
 
 
     // ========================================================
-    // APPLY
+    // APPLY + SAVE
     // ========================================================
 
     applyButton.addEventListener(
@@ -3658,6 +4361,10 @@ console.log(
             }
 
 
+            // ------------------------------------------------
+            // APPLY STYLE
+            // ------------------------------------------------
+
             if (
                 styleTypeSelect.value ===
                 'categorized'
@@ -3672,9 +4379,21 @@ console.log(
                 layer.setStyle(
                     createSingleStyle()
                 );
-
             }
 
+
+            // ------------------------------------------------
+            // 💾 SAVE STYLE
+            // ------------------------------------------------
+
+            saveCurrentStyle(
+                layer
+            );
+
+
+            // ------------------------------------------------
+            // REDRAW MAP
+            // ------------------------------------------------
 
             if (
                 map &&
@@ -3682,8 +4401,30 @@ console.log(
             ) {
 
                 map.renderSync();
-
             }
+
+
+            // ------------------------------------------------
+            // SMALL MOBILE FEEDBACK
+            // ------------------------------------------------
+
+            var oldText =
+                applyButton.textContent;
+
+
+            applyButton.textContent =
+                '✓ Saved';
+
+
+            setTimeout(
+                function () {
+
+                    applyButton.textContent =
+                        oldText;
+
+                },
+                1200
+            );
 
         }
     );
@@ -3714,8 +4455,44 @@ console.log(
             }
 
 
-            layer.setStyle(null);
+            // ------------------------------------------------
+            // REMOVE SAVED STYLE
+            // ------------------------------------------------
 
+            var styles =
+                getSavedStyles();
+
+
+            var layerName =
+                getLayerName(layer);
+
+
+            if (
+                styles[layerName]
+            ) {
+
+                delete styles[
+                    layerName
+                ];
+
+                saveAllStyles(
+                    styles
+                );
+            }
+
+
+            // ------------------------------------------------
+            // RESTORE ORIGINAL STYLE
+            // ------------------------------------------------
+
+            layer.setStyle(
+                null
+            );
+
+
+            // ------------------------------------------------
+            // REDRAW
+            // ------------------------------------------------
 
             if (
                 map &&
@@ -3723,11 +4500,16 @@ console.log(
             ) {
 
                 map.renderSync();
-
             }
 
 
-            loadLayer(layer);
+            // ------------------------------------------------
+            // LOAD ORIGINAL STYLE
+            // ------------------------------------------------
+
+            loadLayer(
+                layer
+            );
 
         }
     );
@@ -3753,7 +4535,9 @@ console.log(
                 ];
 
 
-            loadLayer(layer);
+            loadLayer(
+                layer
+            );
 
         }
     );
@@ -3773,15 +4557,15 @@ console.log(
 
 
             categoryFieldRow.style.display =
-                categorized ?
-                'flex' :
-                'none';
+                categorized
+                    ? 'flex'
+                    : 'none';
 
 
             categoryValuesRow.style.display =
-                categorized ?
-                'block' :
-                'none';
+                categorized
+                    ? 'block'
+                    : 'none';
 
 
             if (categorized) {
@@ -3843,39 +4627,49 @@ console.log(
             );
 
 
-        rows.forEach(function (row) {
+        rows.forEach(
+            function (row) {
 
-            var label =
-                row.querySelector('label');
+                var label =
+                    row.querySelector(
+                        'label'
+                    );
 
 
-            if (!label) {
-                return;
+                if (!label) {
+                    return;
+                }
+
+
+                var text =
+                    label.textContent
+                        .trim()
+                        .toLowerCase();
+
+
+                if (
+                    text ===
+                    'label field' ||
+
+                    text ===
+                    'label color' ||
+
+                    text ===
+                    'label size' ||
+
+                    text ===
+                    'label rotation'
+                ) {
+
+                    row.style.display =
+                        enabled
+                            ? 'flex'
+                            : 'none';
+
+                }
+
             }
-
-
-            var text =
-                label.textContent
-                    .trim()
-                    .toLowerCase();
-
-
-            if (
-                text === 'label field' ||
-                text === 'label color' ||
-                text === 'label size' ||
-                text === 'label rotation'
-            ) {
-
-                row.style.display =
-                    enabled ?
-                    'flex' :
-                    'none';
-
-            }
-
-        });
-
+        );
     }
 
 
@@ -3883,6 +4677,119 @@ console.log(
         'change',
         updateLabelVisibility
     );
+
+
+    // ========================================================
+    // 🔄 RESTORE ALL SAVED STYLES
+    // ========================================================
+
+    function restoreAllSavedStyles() {
+
+        var layers =
+            getVectorLayers();
+
+
+        if (
+            !layers ||
+            layers.length === 0
+        ) {
+
+            return;
+        }
+
+
+        var savedStyles =
+            getSavedStyles();
+
+
+        layers.forEach(
+            function (layer) {
+
+                var layerName =
+                    getLayerName(layer);
+
+
+                var saved =
+                    savedStyles[
+                        layerName
+                    ];
+
+
+                if (!saved) {
+                    return;
+                }
+
+
+                // ------------------------------------------------
+                // Temporarily select this layer
+                // so category/label fields can be populated.
+                // ------------------------------------------------
+
+                var index =
+                    layers.indexOf(
+                        layer
+                    );
+
+
+                layerSelect.value =
+                    index;
+
+
+                populateFields();
+
+
+                applySavedStyleToLayer(
+                    layer,
+                    saved
+                );
+
+            }
+        );
+
+
+        // ----------------------------------------------------
+        // Return to first/current layer
+        // ----------------------------------------------------
+
+        if (layers.length > 0) {
+
+            var currentIndex =
+                parseInt(
+                    layerSelect.value || 0
+                );
+
+
+            if (
+                currentIndex >=
+                layers.length
+            ) {
+
+                currentIndex = 0;
+
+            }
+
+
+            layerSelect.value =
+                currentIndex;
+
+
+            loadLayer(
+                layers[
+                    currentIndex
+                ]
+            );
+        }
+
+
+        if (
+            map &&
+            map.renderSync
+        ) {
+
+            map.renderSync();
+        }
+
+    }
 
 
     // ========================================================
@@ -3894,7 +4801,6 @@ console.log(
         function (e) {
 
             e.preventDefault();
-
             e.stopPropagation();
 
 
@@ -3929,7 +4835,6 @@ console.log(
         function (e) {
 
             e.preventDefault();
-
             e.stopPropagation();
 
 
@@ -3952,18 +4857,20 @@ console.log(
         'touchend',
         'pointerdown',
         'pointerup'
-    ].forEach(function (eventName) {
+    ].forEach(
+        function (eventName) {
 
-        stylePanel.addEventListener(
-            eventName,
-            function (e) {
+            stylePanel.addEventListener(
+                eventName,
+                function (e) {
 
-                e.stopPropagation();
+                    e.stopPropagation();
 
-            }
-        );
+                }
+            );
 
-    });
+        }
+    );
 
 
     // ========================================================
@@ -3985,7 +4892,38 @@ console.log(
         stylePanel;
 
 
+    // ========================================================
+    // 🚀 AUTOMATICALLY RESTORE SAVED STYLES
+    // ========================================================
+    //
+    // A small delay is used because qgis2web/OpenLayers
+    // layers may still be loading when this script executes.
+    //
+    // ========================================================
+
+    setTimeout(
+        function () {
+
+            try {
+
+                restoreAllSavedStyles();
+
+            } catch (e) {
+
+                console.warn(
+                    'Saved style restoration failed:',
+                    e
+                );
+
+            }
+
+        },
+        1500
+    );
+
+
 })();
+
 
 
 
