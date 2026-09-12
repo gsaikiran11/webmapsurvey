@@ -3803,7 +3803,7 @@ function createDynamicStyleButton() {
         "button";
 
     button.innerHTML =
-        "🎨 Style";
+        "🎨";
 
 
     button.title =
@@ -4207,39 +4207,6 @@ function addDynamicStyleEditorCSS() {
 
 
 /* ==========================================================
-   OPEN BUTTON
-   ========================================================== */
-
-#dynamic-style-open-button {
-
-    position: fixed;
-
-    right: 15px;
-
-    bottom: 55px;
-
-    z-index: 999998;
-
-    background: #263238;
-
-    color: white;
-
-    border: none;
-
-    border-radius: 8px;
-
-    padding: 10px 14px;
-
-    font-weight: bold;
-
-    box-shadow:
-        0 3px 10px rgba(0,0,0,0.30);
-
-    cursor: pointer;
-}
-
-
-/* ==========================================================
    MOBILE
    ========================================================== */
 
@@ -4272,17 +4239,6 @@ function addDynamicStyleEditorCSS() {
         padding: 10px;
     }
 
-
-    #dynamic-style-open-button {
-
-        right: 10px;
-
-        bottom: 50px;
-
-        padding: 9px 12px;
-
-        font-size: 12px;
-    }
 
 
     #dynamic-style-content select,
