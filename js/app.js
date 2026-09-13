@@ -102,11 +102,68 @@ let vectorLayers = [];
 // 🗂️ COLLAPSIBLE LAYER SWITCHER
 // ============================================================
 
+// ============================================================
+// 🗂️ OPENLAYERS LAYER SWITCHER / LAYER MANAGER
+//
+// IMPORTANT ORDERING RULE:
+//
+// vectorLayers[0] = TOP layer on map
+// vectorLayers[1] = second layer
+// vectorLayers[2] = third layer
+// ...
+// vectorLayers[last] = BOTTOM layer on map
+//
+// Layer Switcher displays the same order.
+//
+// Example:
+//
+//   Survey No       ← TOP ON MAP
+//   Enjoyment
+//   Roads
+//   Village Boundary ← BOTTOM ON MAP
+//
+// ============================================================
+
+
+
+// ============================================================
+// CREATE LAYER SWITCHER
+// ============================================================
+
 function createLayerSwitcher() {
 
-    const panel = document.createElement("div");
+    // --------------------------------------------------------
+    // REMOVE EXISTING SWITCHER IF ALREADY EXISTS
+    // --------------------------------------------------------
 
-    panel.className = "layer-switcher";
+    const oldPanel =
+        document.querySelector(
+            ".layer-switcher"
+        );
+
+    if (oldPanel) {
+
+        oldPanel.remove();
+
+    }
+
+
+    // --------------------------------------------------------
+    // CREATE PANEL
+    // --------------------------------------------------------
+
+    const panel =
+        document.createElement(
+            "div"
+        );
+
+    panel.className =
+        "layer-switcher";
+
+
+    // --------------------------------------------------------
+    // PANEL HTML
+    // --------------------------------------------------------
 
     panel.innerHTML = `
 
@@ -162,7 +219,9 @@ function createLayerSwitcher() {
     // ADD SWITCHER TO PAGE
     // --------------------------------------------------------
 
-    document.body.appendChild(panel);
+    document.body.appendChild(
+        panel
+    );
 
 
     // --------------------------------------------------------
@@ -191,11 +250,13 @@ function createLayerSwitcher() {
     // START COLLAPSED
     // --------------------------------------------------------
 
-    panel.classList.remove("open");
+    panel.classList.remove(
+        "open"
+    );
 
 
     // --------------------------------------------------------
-    // CLICK LAYERS ICON
+    // CLICK LAYERS HEADER
     // --------------------------------------------------------
 
     header.addEventListener(
@@ -206,7 +267,9 @@ function createLayerSwitcher() {
 
             event.stopPropagation();
 
-            panel.classList.toggle("open");
+            panel.classList.toggle(
+                "open"
+            );
 
         }
     );
@@ -214,6 +277,7 @@ function createLayerSwitcher() {
 
     // --------------------------------------------------------
     // CLICK INSIDE PANEL
+    //
     // DO NOT CLOSE PANEL
     // --------------------------------------------------------
 
@@ -229,6 +293,7 @@ function createLayerSwitcher() {
 }
 
 
+
 // ============================================================
 // BASE LAYER CONTROLS
 // ============================================================
@@ -240,8 +305,16 @@ function createBaseLayerControls() {
             "base-layers"
         );
 
-    if (!container) return;
+    if (!container) {
 
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // CLEAR
+    // --------------------------------------------------------
 
     container.innerHTML = "";
 
@@ -269,6 +342,7 @@ function createBaseLayerControls() {
 
     osmRadio.name =
         "base-layer";
+
 
     osmRadio.checked =
         osmLayer.getVisible();
@@ -309,9 +383,11 @@ function createBaseLayerControls() {
         osmText
     );
 
+
     container.appendChild(
         osmItem
     );
+
 
 
     // ========================================================
@@ -337,6 +413,7 @@ function createBaseLayerControls() {
 
     googleRadio.name =
         "base-layer";
+
 
     googleRadio.checked =
         googleHybridLayer.getVisible();
@@ -377,11 +454,13 @@ function createBaseLayerControls() {
         googleText
     );
 
+
     container.appendChild(
         googleItem
     );
 
 }
+
 
 
 // ============================================================
@@ -415,8 +494,21 @@ function createLayerButton(
 }
 
 
+
 // ============================================================
 // ADD VECTOR LAYER TO LAYER MANAGER
+// ============================================================
+//
+// IMPORTANT:
+//
+// The order in vectorLayers is the same order shown here.
+//
+// vectorLayers[0]
+//     ↓
+// TOP OF SWITCHER
+//     ↓
+// TOP OF MAP
+//
 // ============================================================
 
 function addOverlayToSwitcher(
@@ -428,7 +520,11 @@ function addOverlayToSwitcher(
             "vector-layers"
         );
 
-    if (!container) return;
+    if (!container) {
+
+        return;
+
+    }
 
 
     // --------------------------------------------------------
@@ -444,7 +540,9 @@ function addOverlayToSwitcher(
         "layer-manager-row";
 
 
-    // Save row reference
+    // --------------------------------------------------------
+    // SAVE ROW REFERENCE
+    // --------------------------------------------------------
 
     layer.set(
         "managerRow",
@@ -506,6 +604,7 @@ function addOverlayToSwitcher(
 
     const layerTitle =
         layer.get("title") ||
+        layer.get("name") ||
         "Unnamed Layer";
 
 
@@ -529,9 +628,10 @@ function addOverlayToSwitcher(
     );
 
 
-    // --------------------------------------------------------
+
+    // ========================================================
     // BUTTON SECTION
-    // --------------------------------------------------------
+    // ========================================================
 
     const buttons =
         document.createElement(
@@ -540,6 +640,7 @@ function addOverlayToSwitcher(
 
     buttons.className =
         "layer-buttons";
+
 
 
     // ========================================================
@@ -567,6 +668,7 @@ function addOverlayToSwitcher(
         };
 
 
+
     // ========================================================
     // MOVE UP BUTTON
     // ========================================================
@@ -590,6 +692,7 @@ function addOverlayToSwitcher(
             );
 
         };
+
 
 
     // ========================================================
@@ -617,6 +720,7 @@ function addOverlayToSwitcher(
         };
 
 
+
     // --------------------------------------------------------
     // ADD BUTTONS
     // --------------------------------------------------------
@@ -634,8 +738,9 @@ function addOverlayToSwitcher(
     );
 
 
+
     // --------------------------------------------------------
-    // ADD TO ROW
+    // ADD BUTTONS TO ROW
     // --------------------------------------------------------
 
     row.appendChild(
@@ -647,8 +752,9 @@ function addOverlayToSwitcher(
     );
 
 
+
     // --------------------------------------------------------
-    // ADD ROW TO CONTAINER
+    // ADD ROW
     // --------------------------------------------------------
 
     container.appendChild(
@@ -656,6 +762,7 @@ function addOverlayToSwitcher(
     );
 
 }
+
 
 
 // ============================================================
@@ -666,17 +773,38 @@ function zoomToLayer(
     layer
 ) {
 
+    if (!layer) {
+
+        return;
+
+    }
+
+
     const source =
         layer.getSource();
 
-    if (!source) return;
+
+    if (!source) {
+
+        return;
+
+    }
 
 
     const extent =
         source.getExtent();
 
-    if (!extent) return;
 
+    if (!extent) {
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // EMPTY LAYER CHECK
+    // --------------------------------------------------------
 
     if (
 
@@ -699,6 +827,10 @@ function zoomToLayer(
     }
 
 
+    // --------------------------------------------------------
+    // ZOOM
+    // --------------------------------------------------------
+
     map.getView().fit(
         extent,
         {
@@ -720,8 +852,27 @@ function zoomToLayer(
 }
 
 
+
 // ============================================================
 // MOVE LAYER UP
+// ============================================================
+//
+// UP = TOWARDS TOP OF MAP
+//
+// Example:
+//
+// Before:
+//
+// Layer A     [0]
+// Layer B     [1]
+// Layer C     [2]
+//
+// Move Layer C UP:
+//
+// Layer A     [0]
+// Layer C     [1]
+// Layer B     [2]
+//
 // ============================================================
 
 function moveLayerUp(
@@ -734,6 +885,10 @@ function moveLayerUp(
         );
 
 
+    // --------------------------------------------------------
+    // ALREADY TOP
+    // --------------------------------------------------------
+
     if (index <= 0) {
 
         return;
@@ -742,7 +897,7 @@ function moveLayerUp(
 
 
     // --------------------------------------------------------
-    // SWAP
+    // SWAP WITH PREVIOUS
     // --------------------------------------------------------
 
     const temp =
@@ -765,6 +920,10 @@ function moveLayerUp(
         temp;
 
 
+    // --------------------------------------------------------
+    // REBUILD
+    // --------------------------------------------------------
+
     rebuildMapOrder();
 
     rebuildLayerManager();
@@ -772,8 +931,13 @@ function moveLayerUp(
 }
 
 
+
 // ============================================================
 // MOVE LAYER DOWN
+// ============================================================
+//
+// DOWN = TOWARDS BOTTOM OF MAP
+//
 // ============================================================
 
 function moveLayerDown(
@@ -785,6 +949,10 @@ function moveLayerDown(
             layer
         );
 
+
+    // --------------------------------------------------------
+    // INVALID / ALREADY BOTTOM
+    // --------------------------------------------------------
 
     if (
 
@@ -801,7 +969,7 @@ function moveLayerDown(
 
 
     // --------------------------------------------------------
-    // SWAP
+    // SWAP WITH NEXT
     // --------------------------------------------------------
 
     const temp =
@@ -824,6 +992,10 @@ function moveLayerDown(
         temp;
 
 
+    // --------------------------------------------------------
+    // REBUILD
+    // --------------------------------------------------------
+
     rebuildMapOrder();
 
     rebuildLayerManager();
@@ -831,11 +1003,49 @@ function moveLayerDown(
 }
 
 
+
 // ============================================================
 // REBUILD MAP LAYER ORDER
 // ============================================================
+//
+// IMPORTANT OPENLAYERS RULE:
+//
+// The layer added LAST is rendered ABOVE
+// the layer added BEFORE it.
+//
+// Therefore:
+//
+// vectorLayers:
+//
+// [0] TOP
+// [1]
+// [2]
+// [3] BOTTOM
+//
+// MUST BE ADDED TO THE MAP AS:
+//
+// [3]
+// [2]
+// [1]
+// [0]
+//
+// ============================================================
 
 function rebuildMapOrder() {
+
+    if (
+        typeof map === "undefined" ||
+        !map
+    ) {
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // REMOVE CURRENT VECTOR LAYERS
+    // --------------------------------------------------------
 
     vectorLayers.forEach(
         function (layer) {
@@ -848,21 +1058,36 @@ function rebuildMapOrder() {
     );
 
 
-    vectorLayers.forEach(
-        function (layer) {
+    // --------------------------------------------------------
+    // ADD IN REVERSE ORDER
+    // --------------------------------------------------------
 
-            map.addLayer(
-                layer
-            );
+    for (
+        let i =
+            vectorLayers.length - 1;
 
-        }
-    );
+        i >= 0;
+
+        i--
+    ) {
+
+        map.addLayer(
+            vectorLayers[i]
+        );
+
+    }
 
 }
 
 
+
 // ============================================================
 // REBUILD LAYER MANAGER
+// ============================================================
+//
+// vectorLayers[0] is displayed FIRST.
+// Therefore it appears at the TOP.
+//
 // ============================================================
 
 function rebuildLayerManager() {
@@ -872,11 +1097,24 @@ function rebuildLayerManager() {
             "vector-layers"
         );
 
-    if (!container) return;
 
+    if (!container) {
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // CLEAR
+    // --------------------------------------------------------
 
     container.innerHTML = "";
 
+
+    // --------------------------------------------------------
+    // REBUILD IN ARRAY ORDER
+    // --------------------------------------------------------
 
     vectorLayers.forEach(
         function (layer) {
@@ -889,6 +1127,7 @@ function rebuildLayerManager() {
     );
 
 }
+
 
 
 // ============================================================
@@ -908,6 +1147,10 @@ async function loadGeoJSON(
         );
 
 
+        // ----------------------------------------------------
+        // FETCH
+        // ----------------------------------------------------
+
         const response =
             await fetch(
                 fileUrl
@@ -923,6 +1166,10 @@ async function loadGeoJSON(
 
         }
 
+
+        // ----------------------------------------------------
+        // READ GEOJSON
+        // ----------------------------------------------------
 
         const geojson =
             await response.json();
@@ -987,20 +1234,39 @@ async function loadGeoJSON(
             });
 
 
+        // ----------------------------------------------------
+        // LAYER PROPERTIES
+        // ----------------------------------------------------
+
         layer.set(
             "title",
             layerName
         );
 
+        layer.set(
+            "name",
+            layerName
+        );
 
         layer.set(
             "file",
             fileUrl
         );
 
+        layer.set(
+            "imported",
+            false
+        );
+
 
         // ----------------------------------------------------
         // ADD TO ARRAY
+        // ----------------------------------------------------
+        //
+        // New normal GeoJSON layer is placed at the BOTTOM.
+        //
+        // This preserves the existing layer order.
+        //
         // ----------------------------------------------------
 
         vectorLayers.push(
@@ -1009,21 +1275,17 @@ async function loadGeoJSON(
 
 
         // ----------------------------------------------------
-        // ADD TO MAP
+        // REBUILD MAP ORDER
         // ----------------------------------------------------
 
-        map.addLayer(
-            layer
-        );
+        rebuildMapOrder();
 
 
         // ----------------------------------------------------
         // ADD TO SWITCHER
         // ----------------------------------------------------
 
-        addOverlayToSwitcher(
-            layer
-        );
+        rebuildLayerManager();
 
 
         console.log(
@@ -1049,6 +1311,7 @@ async function loadGeoJSON(
 }
 
 
+
 // ============================================================
 // GET LOCAL SERVER GEOJSON FILES
 // ============================================================
@@ -1056,6 +1319,11 @@ async function loadGeoJSON(
 async function getLocalGeoJSONFiles() {
 
     try {
+
+        console.log(
+            "Checking local layers folder..."
+        );
+
 
         const response =
             await fetch(
@@ -1077,7 +1345,7 @@ async function getLocalGeoJSONFiles() {
 
 
         // ----------------------------------------------------
-        // FIND GEOJSON FILES
+        // PARSE DIRECTORY HTML
         // ----------------------------------------------------
 
         const parser =
@@ -1099,8 +1367,13 @@ async function getLocalGeoJSONFiles() {
             );
 
 
+        // ----------------------------------------------------
+        // FIND GEOJSON FILES
+        // ----------------------------------------------------
+
         const files =
             links
+
                 .map(
                     function (link) {
 
@@ -1110,15 +1383,18 @@ async function getLocalGeoJSONFiles() {
 
                     }
                 )
+
                 .filter(
                     function (href) {
 
-                        return href &&
+                        return (
+                            href &&
                             href
                                 .toLowerCase()
                                 .endsWith(
                                     ".geojson"
-                                );
+                                )
+                        );
 
                     }
                 );
@@ -1143,11 +1419,13 @@ async function getLocalGeoJSONFiles() {
             error
         );
 
+
         return [];
 
     }
 
 }
+
 
 
 // ============================================================
@@ -1176,6 +1454,10 @@ async function getGitHubGeoJSONFiles() {
             GITHUB_BRANCH;
 
 
+        // ----------------------------------------------------
+        // FETCH GITHUB API
+        // ----------------------------------------------------
+
         const response =
             await fetch(
                 apiUrl
@@ -1195,6 +1477,10 @@ async function getGitHubGeoJSONFiles() {
         const files =
             await response.json();
 
+
+        // ----------------------------------------------------
+        // FILTER GEOJSON
+        // ----------------------------------------------------
 
         return files
 
@@ -1244,11 +1530,13 @@ async function getGitHubGeoJSONFiles() {
             error
         );
 
+
         return [];
 
     }
 
 }
+
 
 
 // ============================================================
@@ -1267,7 +1555,7 @@ async function loadLocalLayers() {
 
 
     console.log(
-        "Detected files:",
+        "Detected local files:",
         files
     );
 
@@ -1300,6 +1588,7 @@ async function loadLocalLayers() {
     }
 
 }
+
 
 
 // ============================================================
@@ -1343,6 +1632,7 @@ async function loadGitHubLayers() {
     }
 
 }
+
 
 
 // ============================================================
@@ -1397,9 +1687,10 @@ async function autoLoadLayers() {
     }
 
 
-    // --------------------------------------------------------
-    // ZOOM TO FIRST LAYER
-    // --------------------------------------------------------
+
+    // ========================================================
+    // ZOOM TO FIRST / TOP LAYER
+    // ========================================================
 
     if (
         vectorLayers.length > 0
@@ -1454,6 +1745,7 @@ async function autoLoadLayers() {
 }
 
 
+
 // ============================================================
 // 🚀 START APPLICATION
 // ============================================================
@@ -1462,10 +1754,10 @@ createLayerSwitcher();
 
 autoLoadLayers();
 
+
 console.log(
     "OpenLayers application started."
 );
-
 
 
 
@@ -12479,63 +12771,72 @@ geolocateButton.addEventListener('touchstart', handleGeolocate);
 
 
 // ============================================================
-// 📂 KML / KMZ IMPORT TOOL
-// ============================================================
-// Separate JavaScript for QGIS2Web + OpenLayers
+// 📂 UNIVERSAL GIS IMPORT TOOL
+// QGIS2Web + OpenLayers
+//
+// Supports:
+// ✔ KML
+// ✔ KMZ
+// ✔ Shapefile ZIP
+// ✔ .shp + .shx + .dbf + .prj
 //
 // Features:
-// ✔ Import KML
-// ✔ Import KMZ
-// ✔ Add imported data as OpenLayers vector layer
-// ✔ Add imported layer to existing layer manager
-// ✔ Zoom to imported data
+// ✔ One import button
+// ✔ Automatic file type detection
+// ✔ Existing layer manager integration
 // ✔ Checkbox visibility
-// ✔ Move imported layer ↑ / ↓
+// ✔ Move layer ↑ / ↓ using existing layer manager
 // ✔ Remove imported layer
+// ✔ Zoom to imported data
 // ✔ Automatic layer name from filename
-// ✔ Default styling
-// ✔ Supports KML styles when available
-// ✔ Works with local KML/KMZ files
+// ✔ KML/KMZ support
+// ✔ Shapefile support
+// ✔ NO custom attribute popup
+// ✔ NO custom click handler
 //
-// IMPORTANT:
-// This file is designed to work with your existing
-// vectorLayers / addOverlayToSwitcher() / rebuildLayerManager()
-// functions.
+// Designed to work with:
+// vectorLayers
+// map
+// MAP_PROJECTION
+// addOverlayToSwitcher()
+// rebuildLayerManager()
+//
 // ============================================================
+
 
 
 // ============================================================
 // ⚙️ CONFIGURATION
 // ============================================================
 
-const KML_KMZ_IMPORT_CONFIG = {
+const GIS_IMPORT_CONFIG = {
 
-    buttonText: "Import KML / KMZ",
+    buttonTitle: "Import KML, KMZ or Shapefile",
 
-    buttonTitle: "Import KML or KMZ file",
+    buttonIcon: "📂",
 
-    // Maximum number of features allowed
-    // Change to 0 for unlimited
+    // Maximum number of features
+    // 0 = unlimited
     maxFeatures: 0
 
 };
 
 
+
 // ============================================================
-// 📦 LOAD JSZIP
+// 🌐 EXTERNAL LIBRARY LOADERS
 // ============================================================
-// KMZ is a ZIP file containing KML.
-//
-// We load JSZip automatically from CDN only when a KMZ
-// file is selected.
-// ============================================================
+
+// ------------------------------------------------------------
+// JSZip
+// Used for KMZ
+// ------------------------------------------------------------
 
 let jsZipLoadingPromise = null;
 
 
 function loadJSZip() {
 
-    // Already available
     if (typeof JSZip !== "undefined") {
 
         return Promise.resolve();
@@ -12543,7 +12844,6 @@ function loadJSZip() {
     }
 
 
-    // Already loading
     if (jsZipLoadingPromise) {
 
         return jsZipLoadingPromise;
@@ -12552,56 +12852,58 @@ function loadJSZip() {
 
 
     jsZipLoadingPromise = new Promise(
+
         function (resolve, reject) {
 
             const script =
                 document.createElement("script");
 
+
             script.src =
                 "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
 
-            script.onload =
-                function () {
 
-                    if (
-                        typeof JSZip !==
-                        "undefined"
-                    ) {
+            script.onload = function () {
 
-                        resolve();
+                if (
+                    typeof JSZip !== "undefined"
+                ) {
 
-                    }
+                    console.log(
+                        "JSZip loaded successfully."
+                    );
 
-                    else {
+                    resolve();
 
-                        reject(
-                            new Error(
-                                "JSZip loaded but is unavailable."
-                            )
-                        );
-
-                    }
-
-                };
-
-
-            script.onerror =
-                function () {
+                }
+                else {
 
                     reject(
                         new Error(
-                            "Could not load JSZip."
+                            "JSZip loaded but is unavailable."
                         )
                     );
 
-                };
+                }
+
+            };
 
 
-            document.head.appendChild(
-                script
-            );
+            script.onerror = function () {
+
+                reject(
+                    new Error(
+                        "Could not load JSZip."
+                    )
+                );
+
+            };
+
+
+            document.head.appendChild(script);
 
         }
+
     );
 
 
@@ -12610,13 +12912,98 @@ function loadJSZip() {
 }
 
 
+
+// ------------------------------------------------------------
+// shpjs
+// Used for Shapefile ZIP
+// ------------------------------------------------------------
+
+let shpJSLoadingPromise = null;
+
+
+function loadShpJS() {
+
+    if (typeof shp !== "undefined") {
+
+        return Promise.resolve();
+
+    }
+
+
+    if (shpJSLoadingPromise) {
+
+        return shpJSLoadingPromise;
+
+    }
+
+
+    shpJSLoadingPromise = new Promise(
+
+        function (resolve, reject) {
+
+            const script =
+                document.createElement("script");
+
+
+            script.src =
+                "https://unpkg.com/shpjs@latest/dist/shp.js";
+
+
+            script.onload = function () {
+
+                if (
+                    typeof shp !== "undefined"
+                ) {
+
+                    console.log(
+                        "shpjs loaded successfully."
+                    );
+
+                    resolve();
+
+                }
+                else {
+
+                    reject(
+                        new Error(
+                            "shpjs loaded but the shp function is unavailable."
+                        )
+                    );
+
+                }
+
+            };
+
+
+            script.onerror = function () {
+
+                reject(
+                    new Error(
+                        "Could not load shpjs."
+                    )
+                );
+
+            };
+
+
+            document.head.appendChild(script);
+
+        }
+
+    );
+
+
+    return shpJSLoadingPromise;
+
+}
+
+
+
 // ============================================================
-// 🧹 CLEAN FILE NAME
+// 🧹 CLEAN LAYER NAME
 // ============================================================
 
-function cleanImportedLayerName(
-    fileName
-) {
+function cleanImportedLayerName(fileName) {
 
     if (!fileName) {
 
@@ -12626,23 +13013,21 @@ function cleanImportedLayerName(
 
 
     return fileName
-        .replace(
-            /\.(kml|kmz)$/i,
-            ""
-        )
-        .replace(
-            /[_-]+/g,
-            " "
-        )
-        .trim() ||
 
-        "Imported Layer";
+        .replace(/\.(kml|kmz|zip)$/i, "")
+
+        .replace(/[_-]+/g, " ")
+
+        .trim()
+
+        || "Imported Layer";
 
 }
 
 
+
 // ============================================================
-// 🎨 DEFAULT STYLE
+// 🎨 KML / KMZ DEFAULT STYLE
 // ============================================================
 
 function getImportedKMLStyle() {
@@ -12653,7 +13038,7 @@ function getImportedKMLStyle() {
             new ol.style.Fill({
 
                 color:
-                    "rgba(255, 165, 0, 0.20)"
+                    "rgba(255,165,0,0.20)"
 
             }),
 
@@ -12702,88 +13087,85 @@ function getImportedKMLStyle() {
 }
 
 
+
 // ============================================================
-// 📍 CREATE VECTOR LAYER
+// 🎨 SHAPEFILE DEFAULT STYLE
 // ============================================================
 
-function createImportedKMLLayer(
-    features,
+function getImportedShapefileStyle() {
+
+    return new ol.style.Style({
+
+        fill:
+            new ol.style.Fill({
+
+                color:
+                    "rgba(0,153,255,0.20)"
+
+            }),
+
+
+        stroke:
+            new ol.style.Stroke({
+
+                color:
+                    "#0066cc",
+
+                width:
+                    2
+
+            }),
+
+
+        image:
+            new ol.style.Circle({
+
+                radius:
+                    6,
+
+                fill:
+                    new ol.style.Fill({
+
+                        color:
+                            "#0066cc"
+
+                    }),
+
+                stroke:
+                    new ol.style.Stroke({
+
+                        color:
+                            "#ffffff",
+
+                        width:
+                            2
+
+                    })
+
+            })
+
+    });
+
+}
+
+
+
+// ============================================================
+// 🧭 ADD IMPORTED LAYER TO APPLICATION
+// ============================================================
+
+function registerImportedLayer(
+
+    layer,
     layerName,
-    fileName
+    fileName,
+    importType
+
 ) {
 
-    if (
-        !features ||
-        features.length === 0
-    ) {
-
-        alert(
-            "No features were found in the KML/KMZ file."
-        );
-
-        return null;
-
-    }
-
 
     // --------------------------------------------------------
-    // MAX FEATURE CHECK
-    // --------------------------------------------------------
-
-    if (
-        KML_KMZ_IMPORT_CONFIG.maxFeatures > 0 &&
-
-        features.length >
-        KML_KMZ_IMPORT_CONFIG.maxFeatures
-    ) {
-
-        alert(
-            "The file contains " +
-            features.length +
-            " features.\n\n" +
-            "Maximum allowed: " +
-            KML_KMZ_IMPORT_CONFIG.maxFeatures
-        );
-
-        return null;
-
-    }
-
-
-    // --------------------------------------------------------
-    // VECTOR SOURCE
-    // --------------------------------------------------------
-
-    const source =
-        new ol.source.Vector({
-
-            features:
-                features
-
-        });
-
-
-    // --------------------------------------------------------
-    // VECTOR LAYER
-    // --------------------------------------------------------
-
-    const layer =
-        new ol.layer.Vector({
-
-            source:
-                source,
-
-            visible:
-                true,
-
-            style:
-                getImportedKMLStyle()
-
-        });
-
-
-    // --------------------------------------------------------
-    // LAYER INFORMATION
+    // Basic layer information
     // --------------------------------------------------------
 
     layer.set(
@@ -12805,8 +13187,14 @@ function createImportedKMLLayer(
 
 
     layer.set(
-        "kmlImported",
+        "imported",
         true
+    );
+
+
+    layer.set(
+        "importType",
+        importType
     );
 
 
@@ -12817,71 +13205,120 @@ function createImportedKMLLayer(
 
 
     // --------------------------------------------------------
-    // ADD TO GLOBAL VECTOR LAYERS ARRAY
+    // Type-specific flags
+    // --------------------------------------------------------
+
+    if (importType === "KML") {
+
+        layer.set(
+            "kmlImported",
+            true
+        );
+
+    }
+
+
+    if (importType === "KMZ") {
+
+        layer.set(
+            "kmlImported",
+            true
+        );
+
+        layer.set(
+            "kmzImported",
+            true
+        );
+
+    }
+
+
+    if (importType === "Shapefile") {
+
+        layer.set(
+            "shpImported",
+            true
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // Add to global vectorLayers
     // --------------------------------------------------------
 
     if (
-        typeof vectorLayers !==
-        "undefined" &&
+
+        typeof vectorLayers !== "undefined" &&
 
         Array.isArray(vectorLayers)
+
     ) {
 
-        vectorLayers.push(
-            layer
-        );
+        vectorLayers.push(layer);
 
     }
 
 
     // --------------------------------------------------------
-    // ADD TO MAP
+    // Add to OpenLayers map
     // --------------------------------------------------------
 
     if (
-        typeof map !==
-        "undefined" &&
+
+        typeof map !== "undefined" &&
+
         map
+
     ) {
 
-        map.addLayer(
-            layer
-        );
+        map.addLayer(layer);
 
     }
 
 
     // --------------------------------------------------------
-    // ADD TO EXISTING LAYER MANAGER
+    // Add to existing layer manager
     // --------------------------------------------------------
 
     if (
+
         typeof addOverlayToSwitcher ===
         "function"
+
     ) {
 
-        addOverlayToSwitcher(
-            layer
-        );
+        addOverlayToSwitcher(layer);
 
     }
 
 
     // --------------------------------------------------------
-    // ZOOM TO IMPORTED DATA
+    // Rebuild existing layer manager
     // --------------------------------------------------------
 
-    zoomToImportedLayer(
-        layer
-    );
+    if (
 
+        typeof rebuildLayerManager ===
+        "function"
 
-    console.log(
-        "KML/KMZ imported:",
-        layerName,
-        "Features:",
-        features.length
-    );
+    ) {
+
+        try {
+
+            rebuildLayerManager();
+
+        }
+        catch (error) {
+
+            console.warn(
+                "Could not rebuild layer manager:",
+                error
+            );
+
+        }
+
+    }
 
 
     return layer;
@@ -12889,17 +13326,21 @@ function createImportedKMLLayer(
 }
 
 
+
 // ============================================================
 // 🔍 ZOOM TO IMPORTED LAYER
 // ============================================================
 
-function zoomToImportedLayer(
-    layer
-) {
+function zoomToImportedLayer(layer) {
 
     if (
+
         !layer ||
+
+        typeof map === "undefined" ||
+
         !map
+
     ) {
 
         return;
@@ -12923,11 +13364,17 @@ function zoomToImportedLayer(
 
 
     if (
+
         !extent ||
+
         extent[0] === Infinity ||
+
         extent[1] === Infinity ||
+
         extent[2] === -Infinity ||
+
         extent[3] === -Infinity
+
     ) {
 
         return;
@@ -12936,7 +13383,9 @@ function zoomToImportedLayer(
 
 
     map.getView().fit(
+
         extent,
+
         {
 
             padding: [
@@ -12946,29 +13395,172 @@ function zoomToImportedLayer(
                 80
             ],
 
-            duration:
-                800,
+            duration: 800,
 
-            maxZoom:
-                19
+            maxZoom: 19
 
         }
+
     );
 
 }
 
 
+
 // ============================================================
-// 📄 READ KML
+// 📍 CREATE KML / KMZ LAYER
+// ============================================================
+
+function createImportedKMLLayer(
+
+    features,
+    layerName,
+    fileName,
+    importType
+
+) {
+
+
+    if (
+
+        !features ||
+
+        features.length === 0
+
+    ) {
+
+        alert(
+            "No features were found in the KML/KMZ file."
+        );
+
+        return null;
+
+    }
+
+
+    // --------------------------------------------------------
+    // Maximum feature check
+    // --------------------------------------------------------
+
+    if (
+
+        GIS_IMPORT_CONFIG.maxFeatures > 0 &&
+
+        features.length >
+        GIS_IMPORT_CONFIG.maxFeatures
+
+    ) {
+
+        alert(
+
+            "The file contains " +
+
+            features.length +
+
+            " features.\n\n" +
+
+            "Maximum allowed: " +
+
+            GIS_IMPORT_CONFIG.maxFeatures
+
+        );
+
+        return null;
+
+    }
+
+
+    // --------------------------------------------------------
+    // Vector source
+    // --------------------------------------------------------
+
+    const source =
+        new ol.source.Vector({
+
+            features:
+                features
+
+        });
+
+
+    // --------------------------------------------------------
+    // Vector layer
+    // --------------------------------------------------------
+
+    const layer =
+        new ol.layer.Vector({
+
+            source:
+                source,
+
+            visible:
+                true,
+
+            style:
+                getImportedKMLStyle()
+
+        });
+
+
+    // --------------------------------------------------------
+    // Register layer
+    // --------------------------------------------------------
+
+    registerImportedLayer(
+
+        layer,
+
+        layerName,
+
+        fileName,
+
+        importType
+
+    );
+
+
+    // --------------------------------------------------------
+    // Zoom
+    // --------------------------------------------------------
+
+    zoomToImportedLayer(layer);
+
+
+    console.log(
+
+        importType +
+        " imported:",
+
+        layerName,
+
+        "Features:",
+
+        features.length
+
+    );
+
+
+    return layer;
+
+}
+
+
+
+// ============================================================
+// 📄 READ KML TEXT
 // ============================================================
 
 function readKMLText(
+
     kmlText,
     layerName,
-    fileName
+    fileName,
+    importType
+
 ) {
 
     try {
+
 
         const format =
             new ol.format.KML({
@@ -12984,7 +13576,9 @@ function readKMLText(
 
         const features =
             format.readFeatures(
+
                 kmlText,
+
                 {
 
                     dataProjection:
@@ -12994,32 +13588,41 @@ function readKMLText(
                         MAP_PROJECTION
 
                 }
+
             );
 
 
-        // ----------------------------------------------------
-        // CREATE LAYER
-        // ----------------------------------------------------
-
         return createImportedKMLLayer(
+
             features,
+
             layerName,
-            fileName
+
+            fileName,
+
+            importType
+
         );
 
     }
-
     catch (error) {
 
+
         console.error(
+
             "KML parsing error:",
+
             error
+
         );
 
 
         alert(
+
             "Could not read the KML file.\n\n" +
+
             error.message
+
         );
 
 
@@ -13030,13 +13633,13 @@ function readKMLText(
 }
 
 
+
 // ============================================================
 // 📄 READ KML FILE
 // ============================================================
 
-function readKMLFile(
-    file
-) {
+function readKMLFile(file) {
+
 
     const reader =
         new FileReader();
@@ -13045,20 +13648,29 @@ function readKMLFile(
     reader.onload =
         function (event) {
 
+
             const kmlText =
                 event.target.result;
 
 
             const layerName =
                 cleanImportedLayerName(
+
                     file.name
+
                 );
 
 
             readKMLText(
+
                 kmlText,
+
                 layerName,
-                file.name
+
+                file.name,
+
+                "KML"
+
             );
 
         };
@@ -13067,6 +13679,7 @@ function readKMLFile(
     reader.onerror =
         function () {
 
+
             alert(
                 "Could not read the KML file."
             );
@@ -13074,98 +13687,90 @@ function readKMLFile(
         };
 
 
-    reader.readAsText(
-        file
-    );
+    reader.readAsText(file);
 
 }
+
 
 
 // ============================================================
 // 📦 READ KMZ FILE
 // ============================================================
 
-async function readKMZFile(
-    file
-) {
+async function readKMZFile(file) {
 
     try {
 
+
         // ----------------------------------------------------
-        // LOAD JSZIP
+        // Load JSZip
         // ----------------------------------------------------
 
         await loadJSZip();
 
 
         // ----------------------------------------------------
-        // READ ZIP
+        // Read ZIP
         // ----------------------------------------------------
 
         const zip =
-            await JSZip.loadAsync(
-                file
-            );
+            await JSZip.loadAsync(file);
 
 
         // ----------------------------------------------------
-        // FIND KML FILE
+        // Find KML
         // ----------------------------------------------------
 
-        let kmlFile =
-            null;
+        let kmlFile = null;
 
 
         // First try doc.kml
         if (
-            zip.files[
-                "doc.kml"
-            ]
+            zip.files["doc.kml"]
         ) {
 
             kmlFile =
-                zip.files[
-                    "doc.kml"
-                ];
+                zip.files["doc.kml"];
 
         }
 
 
         // ----------------------------------------------------
-        // IF DOC.KML NOT FOUND
-        // SEARCH FOR ANY KML
+        // Search for any KML
         // ----------------------------------------------------
 
         if (!kmlFile) {
 
+
             const names =
-                Object.keys(
-                    zip.files
-                );
+                Object.keys(zip.files);
 
 
             for (
+
                 let i = 0;
+
                 i < names.length;
+
                 i++
+
             ) {
+
 
                 const name =
                     names[i];
 
 
                 if (
+
                     name
                         .toLowerCase()
-                        .endsWith(
-                            ".kml"
-                        )
+                        .endsWith(".kml")
+
                 ) {
 
                     kmlFile =
-                        zip.files[
-                            name
-                        ];
+                        zip.files[name];
 
                     break;
 
@@ -13177,13 +13782,306 @@ async function readKMZFile(
 
 
         // ----------------------------------------------------
-        // NO KML FOUND
+        // No KML found
         // ----------------------------------------------------
 
         if (!kmlFile) {
 
+
             alert(
                 "The KMZ file does not contain a KML file."
+            );
+
+
+            return;
+
+        }
+
+
+        // ----------------------------------------------------
+        // Read KML
+        // ----------------------------------------------------
+
+        const kmlText =
+            await kmlFile.async("text");
+
+
+        const layerName =
+            cleanImportedLayerName(
+
+                file.name
+
+            );
+
+
+        // ----------------------------------------------------
+        // Parse KML
+        // ----------------------------------------------------
+
+        readKMLText(
+
+            kmlText,
+
+            layerName,
+
+            file.name,
+
+            "KMZ"
+
+        );
+
+    }
+    catch (error) {
+
+
+        console.error(
+
+            "KMZ parsing error:",
+
+            error
+
+        );
+
+
+        alert(
+
+            "Could not read the KMZ file.\n\n" +
+
+            error.message
+
+        );
+
+    }
+
+}
+
+
+
+// ============================================================
+// 🗺️ CREATE SHAPEFILE LAYER
+// ============================================================
+//
+// IMPORTANT:
+// NO attribute popup
+// NO singleclick handler
+// NO feature click handler
+//
+// ============================================================
+
+function createImportedShapefileLayer(
+
+    features,
+    layerName,
+    fileName
+
+) {
+
+
+    if (
+
+        !features ||
+
+        features.length === 0
+
+    ) {
+
+        alert(
+            "No features were found in the Shapefile."
+        );
+
+        return null;
+
+    }
+
+
+    // --------------------------------------------------------
+    // Maximum feature check
+    // --------------------------------------------------------
+
+    if (
+
+        GIS_IMPORT_CONFIG.maxFeatures > 0 &&
+
+        features.length >
+        GIS_IMPORT_CONFIG.maxFeatures
+
+    ) {
+
+        alert(
+
+            "The Shapefile contains " +
+
+            features.length +
+
+            " features.\n\n" +
+
+            "Maximum allowed: " +
+
+            GIS_IMPORT_CONFIG.maxFeatures
+
+        );
+
+        return null;
+
+    }
+
+
+    // --------------------------------------------------------
+    // Vector source
+    // --------------------------------------------------------
+
+    const source =
+        new ol.source.Vector({
+
+            features:
+                features
+
+        });
+
+
+    // --------------------------------------------------------
+    // Vector layer
+    // --------------------------------------------------------
+
+    const layer =
+        new ol.layer.Vector({
+
+            source:
+                source,
+
+            visible:
+                true,
+
+            style:
+                getImportedShapefileStyle()
+
+        });
+
+
+    // --------------------------------------------------------
+    // Register layer
+    // --------------------------------------------------------
+
+    registerImportedLayer(
+
+        layer,
+
+        layerName,
+
+        fileName,
+
+        "Shapefile"
+
+    );
+
+
+    // --------------------------------------------------------
+    // Zoom
+    // --------------------------------------------------------
+
+    zoomToImportedLayer(layer);
+
+
+    console.log(
+
+        "Shapefile imported:",
+
+        layerName,
+
+        "Features:",
+
+        features.length
+
+    );
+
+
+    return layer;
+
+}
+
+
+
+// ============================================================
+// 📦 READ SHAPEFILE ZIP
+// ============================================================
+
+async function readShapefileZIP(file) {
+
+    try {
+
+
+        // ----------------------------------------------------
+        // Load shpjs
+        // ----------------------------------------------------
+
+        await loadShpJS();
+
+
+        // ----------------------------------------------------
+        // Read ZIP
+        // ----------------------------------------------------
+
+        const arrayBuffer =
+            await file.arrayBuffer();
+
+
+        console.log(
+
+            "Reading Shapefile ZIP:",
+
+            file.name
+
+        );
+
+
+        // ----------------------------------------------------
+        // Parse ZIP
+        // ----------------------------------------------------
+
+        const geojson =
+            await shp(arrayBuffer);
+
+
+        // ----------------------------------------------------
+        // shpjs may return:
+//        //
+//        // FeatureCollection
+//        // OR
+//        // Array of FeatureCollections
+//        // ----------------------------------------------------
+
+        let geojsonLayers;
+
+
+        if (Array.isArray(geojson)) {
+
+            geojsonLayers =
+                geojson;
+
+        }
+        else {
+
+            geojsonLayers = [
+                geojson
+            ];
+
+        }
+
+
+        // ----------------------------------------------------
+        // Check result
+        // ----------------------------------------------------
+
+        if (
+
+            !geojsonLayers ||
+
+            geojsonLayers.length === 0
+
+        ) {
+
+            alert(
+                "No Shapefile data was found."
             );
 
             return;
@@ -13192,44 +14090,160 @@ async function readKMZFile(
 
 
         // ----------------------------------------------------
-        // READ KML TEXT
+        // Process each layer
         // ----------------------------------------------------
 
-        const kmlText =
-            await kmlFile.async(
-                "text"
-            );
+        for (
+
+            let i = 0;
+
+            i < geojsonLayers.length;
+
+            i++
+
+        ) {
 
 
-        const layerName =
-            cleanImportedLayerName(
+            const geojsonData =
+                geojsonLayers[i];
+
+
+            if (
+
+                !geojsonData ||
+
+                !geojsonData.features
+
+            ) {
+
+                console.warn(
+                    "Invalid GeoJSON returned by shpjs."
+                );
+
+                continue;
+
+            }
+
+
+            // ------------------------------------------------
+            // OpenLayers GeoJSON format
+            // ------------------------------------------------
+
+            const format =
+                new ol.format.GeoJSON();
+
+
+            // ------------------------------------------------
+            // Convert GeoJSON to OpenLayers features
+            // ------------------------------------------------
+
+            const features =
+                format.readFeatures(
+
+                    geojsonData,
+
+                    {
+
+                        dataProjection:
+                            "EPSG:4326",
+
+                        featureProjection:
+                            MAP_PROJECTION
+
+                    }
+
+                );
+
+
+            if (
+
+                !features ||
+
+                features.length === 0
+
+            ) {
+
+                console.warn(
+                    "No features found in Shapefile layer."
+                );
+
+                continue;
+
+            }
+
+
+            // ------------------------------------------------
+            // Layer name
+            // ------------------------------------------------
+
+            let layerName =
+                cleanImportedLayerName(
+
+                    file.name
+
+                );
+
+
+            // ------------------------------------------------
+            // Multiple Shapefiles in same ZIP
+            // ------------------------------------------------
+
+            if (
+                geojsonLayers.length > 1
+            ) {
+
+                layerName =
+                    layerName +
+                    " " +
+                    (i + 1);
+
+            }
+
+
+            // ------------------------------------------------
+            // Create layer
+            // ------------------------------------------------
+
+            createImportedShapefileLayer(
+
+                features,
+
+                layerName,
+
                 file.name
+
             );
 
+        }
 
-        // ----------------------------------------------------
-        // PARSE KML
-        // ----------------------------------------------------
 
-        readKMLText(
-            kmlText,
-            layerName,
+        console.log(
+
+            "Shapefile import completed:",
+
             file.name
+
         );
 
     }
-
     catch (error) {
 
+
         console.error(
-            "KMZ parsing error:",
+
+            "Shapefile import error:",
+
             error
+
         );
 
 
         alert(
-            "Could not read the KMZ file.\n\n" +
+
+            "Could not read the Shapefile ZIP.\n\n" +
+
             error.message
+
         );
 
     }
@@ -13237,13 +14251,20 @@ async function readKMZFile(
 }
 
 
+
 // ============================================================
 // 📂 IMPORT FILE
 // ============================================================
+//
+// Automatically detects:
+// KML
+// KMZ
+// ZIP Shapefile
+//
+// ============================================================
 
-function importKMLKMZFile(
-    file
-) {
+function importGISFile(file) {
+
 
     if (!file) {
 
@@ -13261,14 +14282,10 @@ function importKMLKMZFile(
     // --------------------------------------------------------
 
     if (
-        fileName.endsWith(
-            ".kml"
-        )
+        fileName.endsWith(".kml")
     ) {
 
-        readKMLFile(
-            file
-        );
+        readKMLFile(file);
 
         return;
 
@@ -13280,106 +14297,181 @@ function importKMLKMZFile(
     // --------------------------------------------------------
 
     if (
-        fileName.endsWith(
-            ".kmz"
-        )
+        fileName.endsWith(".kmz")
     ) {
 
-        readKMZFile(
-            file
-        );
+        readKMZFile(file);
 
         return;
 
     }
 
 
+    // --------------------------------------------------------
+    // Shapefile ZIP
+    // --------------------------------------------------------
+
+    if (
+        fileName.endsWith(".zip")
+    ) {
+
+        readShapefileZIP(file);
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // Unsupported file
+    // --------------------------------------------------------
+
     alert(
-        "Please select a KML or KMZ file."
+
+        "Unsupported file type.\n\n" +
+
+        "Please select:\n" +
+
+        "• KML\n" +
+
+        "• KMZ\n" +
+
+        "• Shapefile ZIP"
+
     );
 
 }
 
 
+
 // ============================================================
-// 📂 CREATE FILE INPUT
+// 📁 CREATE FILE INPUT
 // ============================================================
 
-function createKMLKMZFileInput() {
-
-    const input =
-        document.createElement(
-            "input"
-        );
+let gisImportFileInput = null;
 
 
-    input.type =
+function createGISImportFileInput() {
+
+
+    if (gisImportFileInput) {
+
+        return gisImportFileInput;
+
+    }
+
+
+    gisImportFileInput =
+        document.createElement("input");
+
+
+    gisImportFileInput.type =
         "file";
 
 
-    input.accept =
-        ".kml,.kmz,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz";
+    gisImportFileInput.accept =
+        ".kml,.kmz,.zip," +
+        "application/vnd.google-earth.kml+xml," +
+        "application/vnd.google-earth.kmz," +
+        "application/zip," +
+        "application/x-zip-compressed";
 
 
-    input.style.display =
+    gisImportFileInput.style.display =
         "none";
 
 
-    input.addEventListener(
+    document.body.appendChild(
+        gisImportFileInput
+    );
+
+
+    gisImportFileInput.addEventListener(
+
         "change",
-        function () {
+
+        async function (event) {
+
+
+            const files =
+                event.target.files;
+
 
             if (
-                input.files &&
-                input.files.length > 0
+                !files ||
+                files.length === 0
             ) {
 
-                importKMLKMZFile(
-                    input.files[0]
-                );
+                return;
 
             }
 
 
-            // Allow selecting the same file again
-            input.value = "";
+            const file =
+                files[0];
+
+
+            await importGISFile(file);
+
+
+            // ------------------------------------------------
+            // Reset input
+            // Allows same file to be selected again
+            // ------------------------------------------------
+
+            event.target.value = "";
 
         }
+
     );
 
 
-    document.body.appendChild(
-        input
-    );
-
-
-    return input;
+    return gisImportFileInput;
 
 }
+
 
 
 // ============================================================
 // 🔘 CREATE IMPORT BUTTON
 // ============================================================
 
-function createKMLKMZImportButton() {
+function createGISImportButton() {
+
 
     // --------------------------------------------------------
-    // FILE INPUT
+    // Prevent duplicate button
+    // --------------------------------------------------------
+
+    if (
+        document.getElementById(
+            "gis-import-button"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // File input
     // --------------------------------------------------------
 
     const fileInput =
-        createKMLKMZFileInput();
+        createGISImportFileInput();
 
 
     // --------------------------------------------------------
-    // BUTTON
+    // Button
     // --------------------------------------------------------
 
     const button =
-        document.createElement(
-            "button"
-        );
+        document.createElement("button");
+
+
+    button.id =
+        "gis-import-button";
 
 
     button.type =
@@ -13387,23 +14479,25 @@ function createKMLKMZImportButton() {
 
 
     button.className =
-        "kml-kmz-import-button";
+        "gis-import-button";
 
 
     button.title =
-        KML_KMZ_IMPORT_CONFIG.buttonTitle;
+        GIS_IMPORT_CONFIG.buttonTitle;
 
 
     button.innerHTML =
-        "📂";
+        GIS_IMPORT_CONFIG.buttonIcon;
 
 
     // --------------------------------------------------------
-    // CLICK
+    // Click
     // --------------------------------------------------------
 
     button.addEventListener(
+
         "click",
+
         function (event) {
 
             event.preventDefault();
@@ -13413,32 +14507,34 @@ function createKMLKMZImportButton() {
             fileInput.click();
 
         }
+
     );
 
 
     // --------------------------------------------------------
-    // ADD TO MAP
+    // Add to page
     // --------------------------------------------------------
 
-    document.body.appendChild(
-        button
-    );
-
-
-    return button;
+    document.body.appendChild(button);
 
 }
+
 
 
 // ============================================================
 // 🎨 CSS
 // ============================================================
 
-function addKMLKMZImportCSS() {
+function addGISImportCSS() {
+
+
+    // --------------------------------------------------------
+    // Prevent duplicate CSS
+    // --------------------------------------------------------
 
     if (
         document.getElementById(
-            "kml-kmz-import-css"
+            "gis-import-css"
         )
     ) {
 
@@ -13448,22 +14544,20 @@ function addKMLKMZImportCSS() {
 
 
     const style =
-        document.createElement(
-            "style"
-        );
+        document.createElement("style");
 
 
     style.id =
-        "kml-kmz-import-css";
+        "gis-import-css";
 
 
     style.textContent = `
 
         /* ====================================================
-           KML / KMZ IMPORT BUTTON
+           📂 UNIVERSAL GIS IMPORT BUTTON
            ==================================================== */
 
-        .kml-kmz-import-button {
+        .gis-import-button {
 
             position: fixed;
 
@@ -13479,7 +14573,8 @@ function addKMLKMZImportCSS() {
 
             border-radius: 8px;
 
-            background: rgba(255,255,255,0.95);
+            background:
+                rgba(255,255,255,0.95);
 
             box-shadow:
                 0 2px 8px rgba(0,0,0,0.30);
@@ -13503,7 +14598,7 @@ function addKMLKMZImportCSS() {
         }
 
 
-        .kml-kmz-import-button:hover {
+        .gis-import-button:hover {
 
             transform:
                 scale(1.05);
@@ -13514,7 +14609,7 @@ function addKMLKMZImportCSS() {
         }
 
 
-        .kml-kmz-import-button:active {
+        .gis-import-button:active {
 
             transform:
                 scale(0.95);
@@ -13523,12 +14618,12 @@ function addKMLKMZImportCSS() {
 
 
         /* ====================================================
-           MOBILE
+           📱 MOBILE
            ==================================================== */
 
         @media (max-width: 600px) {
 
-            .kml-kmz-import-button {
+            .gis-import-button {
 
                 right: 12px;
 
@@ -13547,23 +14642,25 @@ function addKMLKMZImportCSS() {
     `;
 
 
-    document.head.appendChild(
-        style
-    );
+    document.head.appendChild(style);
 
 }
 
 
+
 // ============================================================
-// 🗑️ OPTIONAL REMOVE SUPPORT
+// 🗑️ REMOVE IMPORTED LAYER
 // ============================================================
-// This function can be called by your layer manager if you
-// later want a delete button for imported KML/KMZ layers.
+//
+// Works for:
+// KML
+// KMZ
+// Shapefile
+//
 // ============================================================
 
-function removeImportedKMLLayer(
-    layer
-) {
+function removeImportedGISLayer(layer) {
+
 
     if (!layer) {
 
@@ -13572,11 +14669,14 @@ function removeImportedKMLLayer(
     }
 
 
-    // Only remove layers imported by this tool
+    // --------------------------------------------------------
+    // Make sure it is an imported layer
+    // --------------------------------------------------------
+
     if (
-        layer.get(
-            "kmlImported"
-        ) !== true
+
+        layer.get("imported") !== true
+
     ) {
 
         return;
@@ -13585,44 +14685,47 @@ function removeImportedKMLLayer(
 
 
     // --------------------------------------------------------
-    // REMOVE FROM MAP
+    // Remove from map
     // --------------------------------------------------------
 
     if (
-        typeof map !==
-        "undefined" &&
+
+        typeof map !== "undefined" &&
+
         map
+
     ) {
 
-        map.removeLayer(
-            layer
-        );
+        map.removeLayer(layer);
 
     }
 
 
     // --------------------------------------------------------
-    // REMOVE FROM VECTOR ARRAY
+    // Remove from vectorLayers
     // --------------------------------------------------------
 
     if (
-        typeof vectorLayers !==
-        "undefined" &&
+
+        typeof vectorLayers !== "undefined" &&
 
         Array.isArray(vectorLayers)
+
     ) {
 
+
         const index =
-            vectorLayers.indexOf(
-                layer
-            );
+            vectorLayers.indexOf(layer);
 
 
         if (index !== -1) {
 
             vectorLayers.splice(
+
                 index,
+
                 1
+
             );
 
         }
@@ -13631,60 +14734,168 @@ function removeImportedKMLLayer(
 
 
     // --------------------------------------------------------
-    // REBUILD MANAGER
+    // Rebuild layer manager
     // --------------------------------------------------------
 
     if (
+
         typeof rebuildLayerManager ===
         "function"
+
     ) {
 
-        rebuildLayerManager();
+        try {
+
+            rebuildLayerManager();
+
+        }
+        catch (error) {
+
+            console.warn(
+
+                "Could not rebuild layer manager:",
+
+                error
+
+            );
+
+        }
 
     }
 
+
+    console.log(
+
+        "Removed imported layer:",
+
+        layer.get("title")
+
+    );
+
 }
+
+
+
+// ============================================================
+// 🗑️ REMOVE ALL IMPORTED LAYERS
+// ============================================================
+
+function removeAllImportedGISLayers() {
+
+
+    if (
+
+        typeof map === "undefined" ||
+
+        !map
+
+    ) {
+
+        return;
+
+    }
+
+
+    const layersToRemove = [];
+
+
+    map.getLayers().forEach(
+
+        function (layer) {
+
+
+            if (
+
+                layer &&
+
+                typeof layer.get ===
+                "function" &&
+
+                layer.get("imported") === true
+
+            ) {
+
+                layersToRemove.push(layer);
+
+            }
+
+        }
+
+    );
+
+
+    layersToRemove.forEach(
+
+        function (layer) {
+
+            removeImportedGISLayer(layer);
+
+        }
+
+    );
+
+
+    console.log(
+
+        "Removed imported layers:",
+
+        layersToRemove.length
+
+    );
+
+}
+
 
 
 // ============================================================
 // 🚀 INITIALIZE
 // ============================================================
 
-(function initializeKMLKMZImport() {
+(function initializeGISImportTool() {
+
 
     function start() {
 
-        addKMLKMZImportCSS();
 
-        createKMLKMZImportButton();
+        addGISImportCSS();
+
+
+        createGISImportButton();
+
 
         console.log(
-            "📂 KML/KMZ Import Tool loaded."
+            "📂 KML / KMZ / Shapefile Import Tool loaded."
         );
+
 
     }
 
-
-    // --------------------------------------------------------
-    // WAIT FOR DOM
-    // --------------------------------------------------------
 
     if (
+
         document.readyState ===
         "loading"
+
     ) {
 
+
         document.addEventListener(
+
             "DOMContentLoaded",
+
             start
+
         );
 
-    }
 
+    }
     else {
+
 
         start();
 
+
     }
+
 
 })();
