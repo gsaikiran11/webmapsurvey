@@ -478,7 +478,7 @@ function addOverlayToSwitcher(
         "checkbox";
 
     checkbox.checked =
-        false;
+        layer.getVisible();
 
 
     checkbox.onchange =
